@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:key="wss_wpapsk_catag">
+	
+		<ListPreference		
+			android:title="WPA Encryption Algorithm"
+			android:key="wpa_pairwise" 
+			android:entries="@array/wpapskAlgorithm" 
+			android:entryValues="@array/wpapskAlgorithmValues" />
+			
+		<ListPreference 
+			android:title="WPA2 Encryption Algorithm"
+			android:key="rsn_pairwise" 
+			android:entries="@array/wpapskAlgorithm" 
+			android:entryValues="@array/wpapskAlgorithmValues" />		
+			
+		<EditTextPreference 
+			android:title="Passphrase" 
+			android:key="wpa_passphrase" 
+			android:singleLine="true"
+			android:maxLength="63" 
+			android:dialogMessage="Must be 8 to 63 chars"
+			android:hint="Enter Passphrase"/>
+
+		<EditTextPreference 
+			android:title="Group Key Renewal Interval" 
+			android:numeric="integer"
+			android:key="wpa_group_rekey"
+			android:dialogMessage="Must be >= 600" 
+			android:singleLine="true"
+			android:hint="Enter Group Key Renewal Interval"/>
+
+	</PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="Wirelss Security Settings WEP" android:key="wss_wep_catag">
+	
+		<ListPreference 
+			android:title="Encryption" 
+			android:key="listPrefEncryption"
+			android:defaultValue="128 bits" 
+			android:entries="@array/encryption"
+			android:entryValues="@array/encryptionValues" />
+		<EditTextPreference 
+			android:name="Key 1"
+			android:defaultValue="" 
+			android:singleLine="true"
+			android:title="Key 1" 
+			android:key="wep_key0" 
+			android:hint="Enter Key 1"
+			android:maxLength="26"/>
+		<EditTextPreference 
+			android:name="Key 2"
+			android:defaultValue="" 
+			android:title="Key 2" 
+			android:key="wep_key1" 
+			android:singleLine="true"
+			android:hint="Enter Key 2"
+			android:maxLength="26"/>
+		<EditTextPreference 
+			android:name="Key 3"
+			android:singleLine="true"
+			android:defaultValue="" 
+			android:title="Key 3" 
+			android:key="wep_key2" 
+			android:hint="Enter Key 3"
+			android:maxLength="26"/>
+		<EditTextPreference 
+			android:name="Key 4"
+			android:singleLine="true"
+			android:defaultValue="" 
+			android:title="Key 4" 
+			android:key="wep_key3"
+			android:hint="Enter Key 4"
+			android:maxLength="26"/>
+
+		<ListPreference 
+			android:title="Transmit Key"
+			android:key="wep_default_key" 
+			android:defaultValue="1"
+			android:entries="@array/transmitKey" 
+			android:entryValues="@array/transmitKeyValues" />
+	</PreferenceCategory>
+
+</PreferenceScreen>

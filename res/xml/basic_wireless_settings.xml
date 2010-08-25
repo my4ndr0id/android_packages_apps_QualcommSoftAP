@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="Basic Wireless Settings" android:enabled="true" android:key="bws_catag1">
+	<CheckBoxPreference 	
+		android:summaryOn="Enabled" 
+		android:summaryOff="Disabled" 		
+		android:key="wpsstate"
+		android:title="WPS"		
+		>
+	</CheckBoxPreference>
+		<ListPreference 
+		android:entries="@array/wpsEnrollArray" 
+		android:entryValues="@array/wpsEnrollValues" 
+		android:key="config_methods"		
+		android:title="WPS Enroll Method"
+		android:enabled="false"
+		>
+	    </ListPreference>
+	</PreferenceCategory>		
+	<PreferenceCategory 
+		android:key="cat_manual"		
+		android:enabled="true"
+		android:shouldDisableView="true">
+			
+		<ListPreference 
+			android:title="Network Mode"
+			android:key="hw_mode" 
+			android:defaultValue="BG"
+			android:entries="@array/networkArray" 
+			android:entryValues="@array/networkValues">
+				
+		</ListPreference>
+							
+		<EditTextPreference 
+			android:title="Network Name / SSID" 
+			android:key="ssid"
+			android:defaultValue="SoftAP"
+			android:dialogMessage="Must be 1 to 32 chars"
+			android:singleLine="true"
+			android:maxLength="32"
+			android:hint="Enter SSID/Network Name"	>
+		</EditTextPreference>
+	
+	<ListPreference 
+		android:entries="@array/freqArray" 
+		android:entryValues="@array/freqValues" 
+		android:key="channel" 
+		android:defaultValue="Auto" 
+		android:title="Channel(Frequency)">
+	</ListPreference>
+	
+	<ListPreference 
+			android:title="Authentication Mode"
+			android:key="auth_algs" 
+			android:defaultValue="Open"
+			android:entries="@array/authArray" 
+			android:entryValues="@array/authValues">
+	</ListPreference>
+		
+	<CheckBoxPreference 
+		android:summaryOn="Enabled" 
+		android:summaryOff="Disabled" 
+		android:key="broadcast_ssid"
+		android:title="SSID Broadcast"
+		android:defaultValue="true">
+	</CheckBoxPreference>
+	
+</PreferenceCategory>
+	
+</PreferenceScreen>

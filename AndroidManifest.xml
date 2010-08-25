@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	android:versionCode="1" android:versionName="1.4" package="com.qualcomm.wifi.softap"
+	>
+	
+	<uses-sdk android:minSdkVersion="7" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission_group android:name="android.permission-group.NETWORK" />	
+	
+	<application android:icon="@drawable/ap" android:label="@string/app_name">
+		<activity android:name=".MainMenuSettings" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="softap.LAUNCH" />
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<receiver android:name="ReceiveBroadcast">
+			<intent-filter>
+				<action android:name="qualcomm.action.SEND" />
+			</intent-filter>
+		</receiver>
+
+		<activity android:label="@string/app_name"
+			android:name=".ws.WirelessSettings">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />	
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ns.NetworkSettings"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>	
+		
+		<activity android:name=".ss.StationStatus"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>		
+
+		<activity android:name=".ws.BasicWirelessSettings"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+	
+		<activity android:name=".ws.WirelessSecuritySettings"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ws.WSS_WEP"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ws.WSS_WPAPSK"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ws.AdvancedWireless"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ns.MACFilterSettings"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+	
+	</application>	
+</manifest> 
