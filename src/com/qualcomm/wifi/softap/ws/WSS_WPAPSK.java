@@ -1,5 +1,9 @@
 package com.qualcomm.wifi.softap.ws;
 
+import java.util.ArrayList;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -10,176 +14,228 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.qualcomm.wifi.softap.L10NConstants;
 import com.qualcomm.wifi.softap.MainMenuSettings;
 import com.qualcomm.wifi.softap.R;
 
-public class WSS_WPAPSK extends PreferenceActivity 
-implements OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener {   
-	private static final String TAG = "QCSOFTAP_GUI_WSS_WPAPSK";	
-	private SharedPreferences preferences;
+/**
+ * This class gives the configuration settings for WPA-PSK, WPA2_PSK and WPA_WPA2 Mixed Security Mode 
+ */
+public class WSS_WPAPSK extends PreferenceActivity implements OnPreferenceChangeListener, 
+OnKeyListener, OnPreferenceClickListener {   
+
+	private static String WPA_ALERT;	
+	private String SecurityMode;
+	private String[] keys;
+
+	private SharedPreferences defSharPref;
 	private ListPreference wpa_pairwiseLst, rsn_pairwiseLst;
-	private EditTextPreference wpapskEdit1,wpapskEdit2;
-	private String[] keys = {"wpa_pairwise", "wpa_passphrase", "wpa_group_rekey", "rsn_pairwise"};	
-	private PreferenceCategory wss_wpapsk_catag;
-	private String SecurityMode, PrevSecurityMode;
-	private SharedPreferences.Editor wssEditor;
-	private EditText passEdit, groupEdit;
-	private String OFR_ER = "should be >= 600";
+	private EditTextPreference wpaPassEdit, wpaGrpEdit;		
+	private PreferenceCategory wss_wpapsk_catag;		
+	private EditText passEdit, groupEdit;	
+	private ArrayList<Preference> prefLst;
+
+	/**
+	 * Method initializes the Activity from  <i>wss_pref_wpapsk.xml</i> preference file
+	 * It compares the current security mode with previous selected Security Mode and updating the UI 
+	 * 
+	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down 
+	 * then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle)
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.wss_pref_wpapsk); 
-		preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		wssEditor = preferences.edit(); 
-
-		wpa_pairwiseLst = (ListPreference)findPreference("wpa_pairwise");
-		rsn_pairwiseLst = (ListPreference) findPreference("rsn_pairwise");
-		rsn_pairwiseLst.setOnPreferenceChangeListener(this);
-		wpa_pairwiseLst.setOnPreferenceChangeListener(this);
-		wpapskEdit1 = (EditTextPreference) findPreference("wpa_passphrase");
-		wpapskEdit1.setOnPreferenceChangeListener(this);
-		wpapskEdit1.setOnPreferenceClickListener(this);
-		wpapskEdit2 = (EditTextPreference) findPreference("wpa_group_rekey");
-		wpapskEdit2.setOnPreferenceChangeListener(this);
-		wpapskEdit2.setOnPreferenceClickListener(this);
-		wss_wpapsk_catag = (PreferenceCategory) findPreference("wss_wpapsk_catag");
+		addPreferencesFromResource(R.xml.wss_pref_wpapsk);
 		
-		SecurityMode = getIntent().getExtras().getString("SecurityMode");
-		PrevSecurityMode = getIntent().getExtras().getString("PrevSecurityMode");
-		wss_wpapsk_catag.setTitle(SecurityMode);
-		
-		Log.i(TAG, "Current and Previous Security Mode : "+SecurityMode+" & "+PrevSecurityMode);		
 
-		if(!PrevSecurityMode.equals("")){
-			if (!PrevSecurityMode.equals(SecurityMode)){
-				Log.i(TAG, "Current and Previous Security Mode are different ");
-				wssEditor.putString("wpa_passphrase", "");
-				wssEditor.putString("wpa_group_rekey", "");
-				wssEditor.commit();
-				wpapskEdit1.setText("");
-				wpapskEdit2.setText("");
-				wpapskEdit1.setSummary("");
-				wpapskEdit2.setSummary("");
-			}
-		}		
+		// Initialize array list to include the preferences
+		prefLst = new ArrayList<Preference>();
 
-		if (SecurityMode.equals(WirelessSecuritySettings.WPA_PSK)){
+		//get the encryption algorithm keys for WPA/WPA2 Encryption algorithm/Passphrase/group key
+		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);
+		keys = getResources().getStringArray(R.array.str_arr_wpapsk_keys);
+
+		wpa_pairwiseLst = (ListPreference)findPreference(L10NConstants.WPA_PAIR_KEY);
+		rsn_pairwiseLst = (ListPreference) findPreference(L10NConstants.RSN_PAIR_KEY);	
+		wpaPassEdit = (EditTextPreference) findPreference(L10NConstants.WPA_PASSPHRASE_KEY);		
+		wpaGrpEdit = (EditTextPreference) findPreference(L10NConstants.WPA_GRP_KEY);		
+		wss_wpapsk_catag = (PreferenceCategory) findPreference(L10NConstants.WSS_PREF_CATEG_KEY);
+
+		//add the preference's inside the array List
+		prefLst.add(wpa_pairwiseLst); prefLst.add(rsn_pairwiseLst);
+		prefLst.add(wpaPassEdit); prefLst.add(wpaGrpEdit);
+
+		//get the security mode value set previously in the wireless security settings where you are calling this class		
+		SecurityMode = getIntent().getExtras().getString(L10NConstants.SM_EXTRA_KEY);		
+		wss_wpapsk_catag.setTitle(SecurityMode);	
+
+		//set wpa_pairwise or rsn_pair
+		if (SecurityMode.equals(L10NConstants.WPA_PSK)){
 			wpa_pairwiseLst.setEnabled(true);
 			rsn_pairwiseLst.setEnabled(false);
-		} else if (SecurityMode.equals(WirelessSecuritySettings.WPA2_PSK)){
+		} else if (SecurityMode.equals(L10NConstants.WPA2_PSK)){
 			wpa_pairwiseLst.setEnabled(false);
 			rsn_pairwiseLst.setEnabled(true);
-		} else if (SecurityMode.equals(WirelessSecuritySettings.WPA_MIXED)){
+		} else{
 			wpa_pairwiseLst.setEnabled(true);
 			rsn_pairwiseLst.setEnabled(true);
-		} else {
-			Log.d(TAG, "Security Mode : Wrong Option");
 		}
 
-		for( int i = 0; i < keys.length; i++) {        	
-			String getConfigMode = preferences.getString(keys[i], null);
-			Log.d(TAG, "List Initial Values " + getConfigMode);	
-			
-			if( getConfigMode != null ){	
+		//set on change/click listener for WPA/WPA2 Encryption algorithm/Passphrase/group key
+		for(int i = 0; i < keys.length; i++) {        	
+			String getConfigMode = defSharPref.getString(keys[i], null);
+			prefLst.get(i).setOnPreferenceChangeListener(this);
+			prefLst.get(i).setOnPreferenceClickListener(this);
+			if(getConfigMode != null){	
 				if (getConfigMode.equals("TKIP CCMP")){
 					getConfigMode = "Mixed";
 				}
-				if( keys[i].equals("wpa_pairwise")){						
-					wpa_pairwiseLst.setSummary(getConfigMode);	
-				} else if( keys[i].equals("rsn_pairwise")){						
-					rsn_pairwiseLst.setSummary(getConfigMode);	
-				} else if( keys[i].equals("wpa_passphrase")){
-					wpapskEdit1.setSummary(getConfigMode);
-				}else if( keys[i].equals("wpa_group_rekey")){					
-					wpapskEdit2.setSummary(getConfigMode);					
-				}
+				prefLst.get(i).setSummary(getConfigMode);				
 			}
 		} 
-		passEdit = wpapskEdit1.getEditText();
+		//set key listener for passphrase/group key
+		passEdit = wpaPassEdit.getEditText();
 		passEdit.setOnKeyListener(this);
-		groupEdit = wpapskEdit2.getEditText();
+		groupEdit = wpaGrpEdit.getEditText();
 		groupEdit.setOnKeyListener(this);		
 	}
+
+	/**
+	 * Validating the keys dynamically through onKey listener of the particular Edit Text Preference
+	 * 
+	 * @param v The view the key has been dispatched to.
+	 * @param keyCode The code for the physical key that was pressed
+	 * @param event The KeyEvent object containing full information about the event.
+	 * 
+	 * @return boolean True if the listener has consumed the event, false otherwise.
+	 */
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		if( v instanceof EditText){
-			EditText editTemp = (EditText)v;
-			String textVal = editTemp.getText().toString();
+		if( v instanceof EditText){			
+			String textVal = ((EditText)v).getText().toString();
 			if(!textVal.equals("")){
 				if(v == passEdit){
-					if(textVal.length() > 63 ){
-						editTemp.setError("Max 63 chars");
-					}else if(textVal.length() < 8){
-						editTemp.setError("Min 8 chars");
+					if(textVal.length() < 8){
+						((EditText)v).setError("Min 8 chars");
 					}
 				} else if(v == groupEdit){	
 					try{
 						if(Integer.parseInt(textVal) < 600) {
-							editTemp.setError(OFR_ER);						
+							((EditText)v).setError(L10NConstants.OUT_GTR_RANGE);				
 						}
 					}catch(Exception e){
-						editTemp.setError("Out of Range");
+						((EditText)v).setError(L10NConstants.OUT_RANGE);
 					}				
 				}
 			}else
-				editTemp.setError("Can not be Null");
+				((EditText)v).setError(L10NConstants.ERROR_NULL);
 		}		
 		return false;
 	}
-	
+	/**
+	 * Setting NULL value to the setError method for all the edit Text Preference
+	 * 
+	 * @param preference edit preference that was clicked. 
+	 * @return boolean true on success.
+	 */
 	public boolean onPreferenceClick(Preference preference) {
-		if(preference instanceof EditTextPreference){
-			EditTextPreference editPref = (EditTextPreference) preference;
-			editPref.getEditText().setError(null);
+		if(preference instanceof EditTextPreference){			
+			((EditTextPreference) preference).getEditText().setError(null);
 		}
 		return true;
 	}
-	
+
+	/**
+	 * This method verify Network mode=n/n-only & encryption algorithm=TKIP to throw warning message
+	 * 
+	 * @param preference The changed Preference.
+	 * @param newValue The new value of the Preference.
+	 * 
+	 * @return boolean True to update the state of the Preference with the new value.
+	 */
 	public boolean onPreferenceChange(Preference preference, Object newValue) {		
 		if(preference instanceof ListPreference){
-			ListPreference lstPref = (ListPreference) preference;
-			int index = lstPref.findIndexOfValue(newValue.toString());
-			if (index != -1){
-				String algmEntry = (String) lstPref.getEntries()[index];
-				lstPref.setSummary(algmEntry);	
+			int index = ((ListPreference) preference).findIndexOfValue(newValue.toString());
+			String sNM = defSharPref.getString(L10NConstants.HW_MODE_KEY, "");			
+			String algmEntry = (String) ((ListPreference) preference).getEntries()[index];
+
+			if(newValue.equals(L10NConstants.WPA_ALG_TKIP)){
+				if(sNM.equals(L10NConstants.SM_N_ONLY)){
+					WPA_ALERT = getString(R.string.wpa_screen_alert_N_TKIP) + " " +
+					getString(R.string.common_append_alert_wpa);
+					showAlertDialog();
+					return false;
+				}else if(sNM.equals(L10NConstants.SM_N)){
+					WPA_ALERT = getString(R.string.wpa_screen_alert_BGN_TKIP) + " " +
+					getString(R.string.common_append_alert_wpa);
+					showAlertDialog();
+					return false;
+				}else{
+					((ListPreference) preference).setSummary(algmEntry);
+				}				
+			}else
+				((ListPreference) preference).setSummary(algmEntry);					
+
+			//selecting the same previously set value should not allow save settings button to be enabled 
+			//in MainMenuSettings file
+			if(((ListPreference) preference) == wpa_pairwiseLst){
+				String wpa_pairwiseCheck = defSharPref.getString(L10NConstants.WPA_PAIR_KEY, "");				
+				if(!wpa_pairwiseCheck.equals(newValue)){
+					MainMenuSettings.preferenceChanged = true;	
+				} 
+			} else {			
+				String rsn_pairwiseCheck = defSharPref.getString(L10NConstants.RSN_PAIR_KEY, "");				
+				if(!rsn_pairwiseCheck.equals(newValue)){
+					MainMenuSettings.preferenceChanged = true;	
+				}
 			}
-			MainMenuSettings.preferenceChanged = true;
-		} else if (preference instanceof EditTextPreference){
-			EditTextPreference editPref = (EditTextPreference) preference;
-			String editVal = editPref.getEditText().getEditableText().toString();
+		} else if (preference instanceof EditTextPreference){			
+			String editVal = ((EditTextPreference) preference).getEditText().getEditableText().toString();
 			if(!editVal.equals("")){
-				if(preference == wpapskEdit1){					
+				if((EditTextPreference) preference == wpaPassEdit){					
 					if( editVal.length()>=8 && editVal.length()<=63) {
-						wpapskEdit1.setSummary(editVal);	
+						wpaPassEdit.setSummary(editVal);	
 					} else {
-						Toast.makeText(this, "Invalid Entry", 0).show();
+						Toast.makeText(this, L10NConstants.INVALID_ENTRY, 1).show();
 						return false;
 					}					
-				} else if(preference == wpapskEdit2){
+				} else if((EditTextPreference) preference == wpaGrpEdit){
 					try{
 						if(Integer.parseInt(editVal) >= 600){
-							wpapskEdit2.setSummary(editVal);
+							wpaGrpEdit.setSummary(editVal);
 						}else{
-							Toast.makeText(this, "Invalid Entry", 0).show();
+							Toast.makeText(this, L10NConstants.INVALID_ENTRY, 1).show();
 							return false;
 						}
 					}catch(NumberFormatException nfe){
-						Toast.makeText(this, "Out of Range", 0).show();
+						Toast.makeText(this, L10NConstants.OUT_RANGE, 1).show();
 						return false;
 					}					
 				}
 			}else{
-				Toast.makeText(this, "Value can not be Null", 0).show();
+				Toast.makeText(this, L10NConstants.ERROR_NULL, 1).show();
 				return false;
 			}
 			MainMenuSettings.preferenceChanged = true;
 		}		
 		return true;
 	}
+	/**
+	 * Shows up alert dialog box for displaying warning message
+	 */
+	private void showAlertDialog(){
+		new AlertDialog.Builder(this)				                
+		.setTitle(getString(R.string.str_dialog_warning))
+		.setMessage(WPA_ALERT)
+		.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {			
+				// No Action
+			}			
+		}).create().show();	
+	}
 }
-

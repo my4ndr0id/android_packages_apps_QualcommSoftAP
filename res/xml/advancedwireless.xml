@@ -1,107 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-	<PreferenceCategory android:title="Advanced Wireless Settings"
+	<PreferenceCategory 
+		android:title="@string/str_prefcat_aws"
 		android:key="aws_catag">
-		
 		<EditTextPreference 
-			android:numeric="integer" android:title="Transmit Power"
+			android:numeric="integer" 
+			android:title="@string/str_aws_pref_edit_tpwr"
 			android:key="tx_power" 
-			android:dialogMessage="Must be 1 to 18" 
+			android:dialogMessage="@string/str_aws_pref_edit_dlg_tpwr" 
 			android:maxLength="2"/>
-		
-		<ListPreference android:title="Data Rate"
-
+		<ListPreference 
+			android:title="@string/str_aws_pref_list_datart"
 			android:key="data_rate"/>
-
-		<!--<ListPreference android:title="Transmit Power"
-
-			android:key="tx_power" android:defaultValue="0"
-			android:entries="@array/txPowerArray" android:entryValues="@array/txPowerValues"/>	
-			
-			
-		
-		<Preference android:title="Data Rates"
-			android:key="data_rates"/>
-			
-			android:entries="@array/basicRatesArray" android:entryValues="@array/basicRatesValues" 
-			android:entries="@array/supportedRatesArray" android:entryValues="@array/supportedRatesValues"			
-		
-			
-
-		--><EditTextPreference 
-			android:defaultValue="2346" android:numeric="integer" android:title="Fragmentation Threshold"
+   		<EditTextPreference 
+			android:defaultValue="2346" 
+			android:numeric="integer" 
+			android:title="@string/str_aws_pref_edit_fragtr"
 			android:key="fragm_threshold" 
-			android:dialogMessage="Must be 256 to 2346" 
-			android:maxLength="4"
-			android:hint="Enter Fragmentation Threshold"/>
-
-		<EditTextPreference 
-			android:defaultValue="2347" android:title="RTS Threshold"
+			android:dialogMessage="@string/str_aws_pref_edit_dlg_fragtr" 
+			android:maxLength="4"/>
+ 		 <EditTextPreference 
+			android:defaultValue="2347" 
+			android:title="@string/str_aws_pref_edit_rtstr"
 			android:numeric="integer" android:key="rts_threshold" 
-			android:dialogMessage="Must be 0 to 2347" 
-			android:maxLength="4"
-			android:hint="Enter RTS Threshold"/>
-
-		<EditTextPreference 
-			android:defaultValue="100" android:title="Beacon Interval"
+			android:dialogMessage="@string/str_aws_pref_edit_dlg_rtstr" 
+			android:maxLength="4"/>
+ 		<EditTextPreference 
+			android:defaultValue="100" 
+			android:title="@string/str_aws_pref_edit_becon"
 			android:numeric="integer" android:key="beacon_int"
-			android:dialogMessage="Must be 1 to 65535" 
-			android:maxLength="5"
-			android:hint="Enter Beacon Interval"/>
-
-		<EditTextPreference android:name="DTIM Period"
-			android:defaultValue="1" android:title="DTIM Period" android:numeric="integer"
-			android:key="dtim_period" android:dialogMessage="Must be 1 to 255" 
-			android:maxLength="3"
-			android:hint="Enter DTIM Period"/>
-
-		<CheckBoxPreference android:summaryOn="Enabled"
-			android:summaryOff="Disabled" android:key="protect_flag"
-			android:title="Protection Flag" android:defaultValue="false">
-		</CheckBoxPreference>
-	
-		<CheckBoxPreference android:summaryOn="Enabled"
-			android:summaryOff="Disabled" android:key="wmm_key"
-			android:title="WMM" android:defaultValue="false">
-		</CheckBoxPreference>
-		
-		<CheckBoxPreference android:summaryOn="Enabled"
-			android:summaryOff="Disabled" android:key="intra_bss"
-			android:title="Intra BSS Forwarding" android:defaultValue="false">
-		</CheckBoxPreference>
-	
-		<CheckBoxPreference android:summaryOn="Enabled"
-			android:summaryOff="Disabled" android:key="d_chk"
-			android:title="802.11d" android:defaultValue="false">
-		</CheckBoxPreference>
-		
-		
-		<ListPreference android:title="Country Code"
-
+			android:dialogMessage="@string/str_aws_pref_edit_dlg_becon" 
+			android:maxLength="5"/>
+		<EditTextPreference			
+			android:defaultValue="1" 
+			android:title="@string/str_aws_pref_edit_dtim" 
+			android:numeric="integer"
+			android:key="dtim_period" 
+			android:dialogMessage="@string/str_aws_pref_edit_dlg_dtim" 
+			android:maxLength="3"/>
+		<CheckBoxPreference 
+			android:summaryOn="Enabled"
+			android:summaryOff="Disabled" 
+			android:key="protect_flag"
+			android:title="@string/str_bws_pref_check_pf" 
+			android:defaultValue="false"/>
+		<CheckBoxPreference 
+			android:summaryOn="Enabled"
+			android:summaryOff="Disabled" 
+			android:key="wmm_key"
+			android:title="@string/str_bws_pref_check_wmm" 
+			android:defaultValue="false"/>
+		<CheckBoxPreference 
+			android:summaryOn="Enabled"
+			android:summaryOff="Disabled" 
+			android:key="intra_bss"
+			android:title="@string/str_bws_pref_check_intrbss" 
+			android:defaultValue="false"/>
+		<CheckBoxPreference 
+			android:summaryOn="Enabled"
+			android:summaryOff="Disabled" 
+			android:key="d_chk"
+			android:title="@string/str_bws_pref_check_d" 
+			android:defaultValue="false"/>		
+		<ListPreference android:title="@string/str_aws_pref_list_ctry"
 			android:key="country_code" 
-			android:entries="@array/countryCodeArray" android:entryValues="@array/countryCodeValues" />
-			
-		--><!--<ListPreference android:title="MPDU Density"
-
-			android:key="mpduKey" android:defaultValue="No restriction"
-			android:entries="@array/mpduDensity" android:entryValues="@array/mpduDensityValues" />
-		<ListPreference android:title="Network Density"
-
-			android:key="networkDensityKey" android:defaultValue="Low"
-			android:entries="@array/networkDensity" android:entryValues="@array/networkDensityValues" />
-		<ListPreference android:title="Pre-amble" android:key="preambleKey"
-			android:defaultValue="Short" android:entries="@array/preamble"
-			android:entryValues="@array/preambleValues" />
-
-		<ListPreference android:title="11n PHY Mode"
-
-			android:key="PHYKey" android:defaultValue="Auto" android:entries="@array/phyMode"
-			android:entryValues="@array/phyModeValues" />
-		<ListPreference android:title="11n Guard Interval"
-
-			android:key="GuardKey" android:defaultValue="Auto" android:entries="@array/guardInterval"
-			android:entryValues="@array/guardIntervalValues" />
-	--></PreferenceCategory>
-
+			android:entries="@array/countryCodeArray" 
+			android:entryValues="@array/countryCodeValues" 
+			android:dependency="d_chk"/>			
+	</PreferenceCategory>
 </PreferenceScreen>

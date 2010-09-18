@@ -1,7 +1,7 @@
 package com.qualcomm.wifi.softap.ws;
 
-import com.qualcomm.wifi.softap.MainMenuSettings;
-import com.qualcomm.wifi.softap.R;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,85 +10,139 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.util.Log;
 
-public class WirelessSecuritySettings extends PreferenceActivity implements OnPreferenceChangeListener {
-	private SharedPreferences defShPref;
-	private ListPreference securityModeLst;  
-	private static final String TAG = "";
-	private final String OPEN = "Open"; 
-	private static final String WEP = "WEP";
-	public static final String WPA_PSK = "WPA-PSK";
-	public static final String WPA2_PSK = "WPA2-PSK";
-	public static final String WPA_MIXED = "WPA-WPA2 Mixed";
-	public static final String SM_EXTRA_KEY = "SecurityMode";	
-	private final String SEC_MODE_KEY = "security_mode";
-	
-	private static String getConfigMode;
-	Intent intent; 
+import com.qualcomm.wifi.softap.L10NConstants;
+import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.R;
 
+/**
+ * This class displays the options to select the security mode for the wireless security<br>
+ * 
+ * {@link com.qualcomm.wifi.softap.ws.WSS_WEP}
+ * {@link com.qualcomm.wifi.softap.ws.WSS_WPAPSK}
+ */
+public class WirelessSecuritySettings extends PreferenceActivity implements OnPreferenceChangeListener {	
+	private String SM_NM_CHECK = "";
+
+	private Intent intent;
+	private SharedPreferences defSharPref, orgSharPref;
+	private ListPreference securityModeLst;
+
+	/**
+	 * Method initializes the Activity from the <i>wss_pref.xml</i> preference file.
+	 * Getting the previous Security Mode to send to next activity screen with the help of preference 
+	 * onClick handler   
+	 * 
+	 * @param savedInstanceState If the activity is being re-initialized after previously being shut down 
+	 * then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle)
+	 */	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.wss_pref);
-		defShPref = PreferenceManager.getDefaultSharedPreferences(this);		 
-
-		securityModeLst = (ListPreference) findPreference(SEC_MODE_KEY);	
+		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);		 
+		orgSharPref = getSharedPreferences(L10NConstants.CONFIG_FILE_NAME, MODE_PRIVATE);
+		//Get the reference to the security mode key
+		securityModeLst = (ListPreference) findPreference(L10NConstants.SEC_MODE_KEY);	
 		securityModeLst.setOnPreferenceChangeListener(this);
+		securityModeLst.setSummary(securityModeLst.getEntry());
+	}
 
-		getConfigMode = defShPref.getString(SEC_MODE_KEY, "0");
-		Log.d(TAG, "List Initial Values " + getConfigMode );
-
-		if( getConfigMode != null ){
-			getConfigMode = (String) securityModeLst.getEntry();			
-			securityModeLst.setSummary(getConfigMode);		
-		}
-		securityModeLst.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {			
-			public boolean onPreferenceClick(Preference preference) {				
-				String tempStr = WirelessSecuritySettings.this.defShPref.getString(SEC_MODE_KEY, "0");
-				Log.d(TAG, "onPreferenceClick - previous String : "+tempStr);
-				if (tempStr.equals("0"))
-					getConfigMode = OPEN;
-				else if (tempStr.equals("1"))
-					getConfigMode = WEP;
-				else if (tempStr.equals("2")){
-					Log.d(TAG, "onPreferenceClick - previous String  within if: "+tempStr);
-					getConfigMode = WPA_PSK;
-				} else if (tempStr.equals("3"))
-					getConfigMode = WPA2_PSK;
-				else if (tempStr.equals("4"))
-					getConfigMode = WPA_MIXED;
-				return true;
-			}
-		});			
-	}	 
-	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		if(preference == securityModeLst){
-			Log.d(TAG, "*********** Wireless Security Mode-onPreferenceChange *************");
-			int index = securityModeLst.findIndexOfValue(newValue.toString());
-			if (index != -1) {  
-				String lstEntry = (String) securityModeLst.getEntries()[index];			
-				Log.d(TAG, "Values - " +securityModeLst.getEntries()[index]);
-				securityModeLst.setSummary(lstEntry);
-				
-				if(lstEntry.equals(WEP)) {
-					intent = new Intent( getBaseContext(), WSS_WEP.class);	
-					startActivity(intent);					
-				} else if(!lstEntry.equals(OPEN)){					
-					intent = new Intent( getBaseContext(), WSS_WPAPSK.class);
-					intent.putExtra("PrevSecurityMode", getConfigMode);					
-					if (lstEntry.equals(WPA_PSK)) {
-						intent.putExtra(SM_EXTRA_KEY, WPA_PSK);						
-					} else if (lstEntry.equals(WPA2_PSK)) {
-						intent.putExtra(SM_EXTRA_KEY, WPA2_PSK);								
-					} else if (lstEntry.equals(WPA_MIXED)) {
-						intent.putExtra(SM_EXTRA_KEY, WPA_MIXED);						
-					}					
-					startActivityForResult(intent, 1);				
+	/**
+	 * Redirect to the below activities <br>
+	 * {@link WSS_WEP Security Mode - WEP}<br>
+	 * {@link WSS_WPAPSK Security Mode - WPAPSK} based on the new changed preference value
+	 * 
+	 * @param preference The changed Preference.
+	 * @param newValue The new value of the Preference.
+	 * 
+	 * @return boolean True to update the state of the Preference with the new value.
+	 */
+	public boolean onPreferenceChange(Preference preference, Object newValue) {		
+		int index = securityModeLst.findIndexOfValue(newValue.toString());
+		
+		//Get Security mode key value from original file ie orgSharPref
+		String securityCheck = orgSharPref.getString(L10NConstants.SEC_MODE_KEY, ""); 
+		
+		//Get string values for network_mode, rsn_pair and wpa_pair from default preference
+		String sNM = defSharPref.getString(L10NConstants.HW_MODE_KEY, "");
+		String sWpa = defSharPref.getString(L10NConstants.WPA_PAIR_KEY, "");
+		String sRsn = defSharPref.getString(L10NConstants.RSN_PAIR_KEY, "");
+		
+		if (index != -1) {
+			String lstEntry = (String) securityModeLst.getEntries()[index];
+			//Show warning alert message which doesn't allow to set security mode=WEP for network mode=n/bgn
+			if(lstEntry.equals(L10NConstants.WEP)) {			
+				intent = new Intent(getBaseContext(), WSS_WEP.class);	
+				if(sNM.equals(L10NConstants.SM_N_ONLY)) {
+					SM_NM_CHECK = getString(R.string.wep_screen_alert_N) + " " +
+					getString(R.string.common_append_alert_wep);
+				}else if(sNM.equals(L10NConstants.SM_N)) {
+					SM_NM_CHECK = getString(R.string.wep_screen_alert_BGN) +" " +
+					getString(R.string.common_append_alert_wep);
 				}
-			}
-			MainMenuSettings.preferenceChanged = true;
+				if(sNM.equals(L10NConstants.SM_N_ONLY) || sNM.equals(L10NConstants.SM_N)) {						
+					showAlertDialog(lstEntry);
+					return false;
+				} else{
+					securityModeLst.setSummary(lstEntry);
+					startActivity(intent);
+				}
+			//Show warning alert message for the scenario Security mode=WPA-PSK/WPA-2PSK/MIXED & network mode=n/bgn			
+			} else if(!lstEntry.equals(L10NConstants.OPEN)) {
+				securityModeLst.setSummary(lstEntry);	
+				intent = new Intent(getBaseContext(), WSS_WPAPSK.class);
+				intent.putExtra(L10NConstants.SM_EXTRA_KEY, lstEntry);
+				
+				if(sNM.equals(L10NConstants.SM_N_ONLY)) {
+					SM_NM_CHECK = getString(R.string.wpa_screen_alert_N_TKIP) + " " +
+					getString(R.string.common_append_alert_wpa);
+				}else if(sNM.equals(L10NConstants.SM_N)){
+					SM_NM_CHECK = getString(R.string.wpa_screen_alert_BGN_TKIP) + " " +
+					getString(R.string.common_append_alert_wpa);
+				}				
+				if(sNM.equals(L10NConstants.SM_N_ONLY) || sNM.equals(L10NConstants.SM_N)){
+					if(newValue.equals(L10NConstants.VAL_TWO)){
+						if(sWpa.equals(L10NConstants.WPA_ALG_TKIP))
+							showAlertDialog(lstEntry);
+						else
+							startActivity(intent);
+					}else if(newValue.equals(L10NConstants.VAL_THREE)){
+						if(sRsn.equals(L10NConstants.WPA_ALG_TKIP))
+							showAlertDialog(lstEntry);
+						 else
+							startActivity(intent);
+					} else{
+						if(sWpa.equals(L10NConstants.WPA_ALG_TKIP) || sRsn.equals(L10NConstants.WPA_ALG_TKIP))
+							showAlertDialog(lstEntry);
+						else
+							startActivity(intent);
+					}							
+				} else 
+					startActivity(intent);																
+			}else
+				securityModeLst.setSummary(lstEntry);
 		}	
+		if(!securityCheck.equals(newValue)){
+			MainMenuSettings.preferenceChanged = true;	
+		}			
 		return true;
+	}
+	
+	/**
+	 * Show alert dialog box displaying the warning message 
+	 * @param lstEntry is the type of security mode selected
+	 */
+	private void showAlertDialog(final String lstEntry){
+		new AlertDialog.Builder(this) 
+		.setTitle(getString(R.string.str_dialog_warning))
+		.setMessage(SM_NM_CHECK)
+		.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if(!lstEntry.equals(L10NConstants.WEP)) {
+					startActivity(intent);
+				}				
+			}			
+		}).create().show();	
 	}
 }

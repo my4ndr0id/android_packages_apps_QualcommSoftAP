@@ -1,61 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-	<array name="mainlist">
-		<item>Wireless Settings</item>
-		<item>Network Settings</item>		
-	</array>
-	<array name="wslist">
+	
+	<array name = "wslist">
 		<item>Basic Wireless Settings</item>
 		<item>Wireless Security Settings</item>
 		<item>Advanced Wireless Settings</item>
 	</array>
-	<array name="nwslist">		
+	<array name = "nwslist">
 		<item>MAC Filter Settings</item>
-		</array>
-	<array name="mgmtlist">
-		<item>Status</item>
-		<item>Profiles</item>
-		<item>Logs</item>
 	</array>
 
-	<string-array name="defProfOpArray">
-		<item>Activate</item>
-		<item>View Settings</item>
-	</string-array>
-	<string-array name="defProfOpValues">
-		<item>Activate</item>
-		<item>View Settings</item>
-	</string-array>
-
-	<string-array name="ProfOpArray">
-		<item>Activate</item>
-		<item>Personalise</item>
-		<item>Remove</item>
-	</string-array>
-	<string-array name="ProfOpValues">
-		<item>Activate</item>
-		<item>Personalise</item>
-		<item>Remove</item>
-	</string-array>
-
-	<string-array name="configArray">
-		<item>Manual</item>
-		<item>WPS</item>		
-	</string-array>
-	<string-array name="configValues">
-		<item>0</item>
-		<item>1</item>		
-	</string-array>
-
-	<string-array name="networkArray">
+	<string-array name = "networkArray">
 		<item>B</item>
 		<item>G</item>
 		<item>N</item>
 		<item>BG</item>
 		<item>BGN</item>
 	</string-array>
-	<string-array name="networkValues">
+	<string-array name = "networkValues">
 		<item>b</item>
 		<item>g_only</item>
 		<item>n_only</item>
@@ -63,7 +25,69 @@
 		<item>n</item>
 	</string-array>
 
-	<string-array name="freqArray">
+	<string-array name = "freqeleven">
+		<item>Auto</item>
+		<item>1 (2.412 GHz)</item>
+		<item>2 (2.417 GHz)</item>
+		<item>3 (2.422 GHz)</item>
+		<item>4 (2.427 GHz)</item>
+		<item>5 (2.432 GHz)</item>
+		<item>6 (2.437 GHz)</item>
+		<item>7 (2.442 GHz)</item>
+		<item>8 (2.447 GHz)</item>
+		<item>9 (2.452 GHz)</item>
+		<item>10 (2.457 GHz)</item>
+		<item>11 (2.462 GHz)</item>
+	</string-array>
+	<string-array name = "freqelevenValues">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+	</string-array>
+
+	<string-array name = "freqthirteen">
+		<item>Auto</item>
+		<item>1 (2.412 GHz)</item>
+		<item>2 (2.417 GHz)</item>
+		<item>3 (2.422 GHz)</item>
+		<item>4 (2.427 GHz)</item>
+		<item>5 (2.432 GHz)</item>
+		<item>6 (2.437 GHz)</item>
+		<item>7 (2.442 GHz)</item>
+		<item>8 (2.447 GHz)</item>
+		<item>9 (2.452 GHz)</item>
+		<item>10 (2.457 GHz)</item>
+		<item>11 (2.462 GHz)</item>
+		<item>12 (2.467 GHz)</item>
+		<item>13 (2.472 GHz)</item>
+	</string-array>
+	<string-array name = "freqthirteenValues">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+	</string-array>
+
+	<string-array name = "freqfourteen">
 		<item>Auto</item>
 		<item>1 (2.412 GHz)</item>
 		<item>2 (2.417 GHz)</item>
@@ -80,7 +104,7 @@
 		<item>13 (2.472 GHz)</item>
 		<item>14 (2.484 GHz)</item>
 	</string-array>
-	<string-array name="freqValues">
+	<string-array name = "freqfourteenValues">
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
@@ -98,7 +122,7 @@
 		<item>14 </item>
 	</string-array>
 
-	<string-array name="authArray">
+	<string-array name = "authArray">
 		<item>Auto</item>
 		<item>Open</item>
 		<item>Shared</item>
@@ -109,35 +133,25 @@
 		<item>2</item>
 	</string-array>
 
-	<string-array name="broadArray">
-		<item>Enable</item>
-		<item>Disable</item>
-	</string-array>
-	<string-array name="broadValues">
-		<item>1</item>
-		<item>0</item>
-	</string-array>
-	
-	<string-array name="wpsEnrollArray">
+	<string-array name = "wpsEnrollArray">
 		<item>PIN Entry</item>
 		<item>Push Button Control</item>
 	</string-array>
-	<string-array name="wpsEnrollValues">
+	<string-array name = "wpsEnrollValues">
 		<item>1</item>
 		<item>0</item>
 	</string-array>
 
-
 	<!--  ***************** WSS ************ -->
 
-	<string-array name="securityMode">
+	<string-array name = "securityMode">
 		<item>Open</item>
 		<item>WEP</item>
 		<item>WPA-PSK</item>
 		<item>WPA2-PSK</item>
 		<item>WPA-WPA2 Mixed</item>
-	</string-array>	
-	<string-array name="securityModeValues">
+	</string-array>
+	<string-array name = "securityModeValues">
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
@@ -145,46 +159,25 @@
 		<item>4</item>
 	</string-array>
 
-
-	<string-array name="encryption">
-		<item>64 bits</item>
-		<item>128 bits</item>
-	</string-array>
-	<string-array name="encryptionValues">
-		<item>64 bits</item>
-		<item>128 bits</item>
-	</string-array>
-
-	<string-array name="transmitKey">
+	<string-array name = "transmitKey">
 		<item>1</item>
 		<item>2</item>
 		<item>3</item>
 		<item>4</item>
 	</string-array>
-	<string-array name="transmitKeyValues">
+	<string-array name = "transmitKeyValues">
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
 		<item>3</item>
 	</string-array>
 
-	<string-array name="wpapskAlgorithm">
+	<string-array name = "wpapskAlgorithm">
 		<item>TKIP</item>
 		<item>CCMP</item>
 		<item>Mixed</item>
 	</string-array>
-	<string-array name="wpapskAlgorithmValues">
-		<item>TKIP</item>
-		<item>CCMP</item>
-		<item>TKIP CCMP</item>
-	</string-array>
-
-	<string-array name="wpa2pskAlgorithm">
-		<item>TKIP</item>
-		<item>CCMP</item>
-		<item>Mixed</item>
-	</string-array>
-	<string-array name="wpa2pskAlgorithmValues">
+	<string-array name = "wpapskAlgorithmValues">
 		<item>TKIP</item>
 		<item>CCMP</item>
 		<item>TKIP CCMP</item>
@@ -192,144 +185,22 @@
 
 	<!--  ***************** ASS ************ -->
 
-	<string-array name="txPowerArray">
-		<item>Low</item>
-		<item>Medium</item>
-		<item>High</item>		
-	</string-array>
-	<string-array name="txPowerValues">
-		<item>0</item>
-		<item>1</item>
-		<item>2</item>		
-	</string-array>
-
-	<string-array name="transmitDataRate">
-		<item>Auto</item>
-		<item>ListofRates</item>
-	</string-array>
-	<string-array name="transmitDataRateValues">
-		<item>Auto</item>
-		<item>ListofRates</item>
-	</string-array>
-
-	<string-array name="multicastRate">
-		<item>Auto</item>
-		<item>1 Mbps</item>
-		<item>2 Mbps</item>
-		<item>5.5 Mbps</item>
-		<item>6 Mbps</item>
-		<item>9 Mbps</item>
-		<item>11 Mbps </item>
-		<item>12 Mbps</item>
-		<item>18 Mbps</item>
-		<item>24 Mbps</item>
-		<item>36 Mbps</item>
-		<item>48 Mbps</item>
-		<item>54 Mbps</item>
-		<item>MCS-0</item>
-		<item>MCS-1</item>
-		<item>MCS-2</item>
-		<item>MCS-3</item>
-		<item>MCS-4</item>
-		<item>MCS-5</item>
-		<item>MCS-6</item>
-		<item>MCS-7</item>
-	</string-array>
-	<string-array name="multicastRateValues">
-		<item>Auto</item>
-		<item>1Mbps</item>
-		<item>2Mbps</item>
-		<item>5.5Mbps</item>
-		<item>6Mbps</item>
-		<item>9Mbps</item>
-		<item>11Mbps </item>
-		<item>12Mbps</item>
-		<item>18Mbps</item>
-		<item>24Mbps</item>
-		<item>36Mbps</item>
-		<item>48Mbps</item>
-		<item>54Mbps</item>
-		<item>MCS-0</item>
-		<item>MCS-1</item>
-		<item>MCS-2</item>
-		<item>MCS-3</item>
-		<item>MCS-4</item>
-		<item>MCS-5</item>
-		<item>MCS-6</item>
-		<item>MCS-7</item>
-	</string-array>
-
-	<string-array name="mpduDensity">
-		<item>No restriction</item>
-		<item>2</item>
-		<item>4</item>
-		<item>8</item>
-		<item>16</item>
-	</string-array>
-	<string-array name="mpduDensityValues">
-		<item>No restriction</item>
-		<item>2</item>
-		<item>4</item>
-		<item>8</item>
-		<item>16</item>
-	</string-array>
-
-	<string-array name="networkDensity">
-		<item>Low</item>
-		<item>Medium</item>
-		<item>Long</item>
-	</string-array>
-	<string-array name="networkDensityValues">
-		<item>Low</item>
-		<item>Medium</item>
-		<item>Long</item>
-	</string-array>
-
-	<string-array name="preamble">
-		<item>Short</item>
-		<item>Long</item>
-	</string-array>
-	<string-array name="preambleValues">
-		<item>Short</item>
-		<item>Long</item>
-	</string-array>
-
-	<string-array name="guardInterval">
-		<item>Auto</item>
-		<item>Mixed</item>
-		<item>Greenfield</item>
-	</string-array>
-	<string-array name="guardIntervalValues">
-		<item>Auto</item>
-		<item>Mixed</item>
-		<item>Greenfield</item>
-	</string-array>
-
-	<string-array name="phyMode">
-		<item>Auto</item>
-		<item>Mixed</item>
-	</string-array>
-	<string-array name="phyModeValues">
-		<item>Auto</item>
-		<item>Mixed</item>
-	</string-array>
-	
-	<string-array name="dataRatesArrayB">
+	<string-array name = "dataRatesArrayB">
 		<item>Auto</item>
 		<item>1</item>
-		<item>2</item>			
+		<item>2</item>
 		<item>5.5</item>
 		<item>11</item>
-	</string-array>	
-	<string-array name="dataRatesValuesB">
+	</string-array>
+	<string-array name = "dataRatesValuesB">
 		<item>0</item>
 		<item>1</item>
-		<item>2</item>			
+		<item>2</item>
 		<item>3</item>
 		<item>4</item>
-	</string-array>			
-		
-	<string-array name="dataRatesArrayGBG">
+	</string-array>
+
+	<string-array name = "dataRatesArrayGBG">
 		<item>Auto</item>
 		<item>1</item>
 		<item>2</item>
@@ -342,9 +213,9 @@
 		<item>24</item>
 		<item>36</item>
 		<item>48</item>
-		<item>54</item>			
+		<item>54</item>
 	</string-array>
-	<string-array name="dataRatesValuesGBG">
+	<string-array name = "dataRatesValuesGBG">
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
@@ -357,73 +228,74 @@
 		<item>9</item>
 		<item>10</item>
 		<item>11</item>
-		<item>12</item>			
+		<item>12</item>
 	</string-array>
-	
-	<string-array name="dataRatesArrayNBGN">
+
+	<string-array name = "dataRatesArrayNBGN">
 		<item>Auto</item>
 		<item>1</item>
 		<item>2</item>
 		<item>5.5</item>
+		<item>11</item>
 		<item>6</item>
-		<item>9</item>		
+		<item>9</item>
 		<item>12</item>
 		<item>18</item>
 		<item>24</item>
 		<item>36</item>
 		<item>48</item>
-		<item>54</item>	
+		<item>54</item>
 		<item>6.5</item>
 		<item>13</item>
 		<item>19.5</item>
 		<item>26</item>
 		<item>39</item>
-		<item>52</item>	
-		<item>58.5</item>		
+		<item>52</item>
+		<item>58.5</item>
 		<item>65(MCS7)</item>
 		<item>7.2</item>
 		<item>14.4</item>
-		<item>21.7</item>	
+		<item>21.7</item>
 		<item>28.9</item>
 		<item>43.3</item>
 		<item>57.8</item>
-		<item>65(MCS6)</item>	
+		<item>65(MCS6)</item>
 		<item>72.2</item>
 	</string-array>
-	<string-array name="dataRatesValuesNBGN">
+	<string-array name = "dataRatesValuesNBGN">
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
 		<item>3</item>
+		<item>4</item>
 		<item>5</item>
-		<item>6</item>		
+		<item>6</item>
 		<item>7</item>
 		<item>8</item>
 		<item>9</item>
 		<item>10</item>
 		<item>11</item>
-		<item>12</item>	
+		<item>12</item>
 		<item>13</item>
 		<item>14</item>
 		<item>15</item>
 		<item>16</item>
 		<item>17</item>
-		<item>18</item>	
-		<item>19</item>		
+		<item>18</item>
+		<item>19</item>
 		<item>20</item>
 		<item>21</item>
 		<item>22</item>
-		<item>23</item>	
+		<item>23</item>
 		<item>24</item>
 		<item>25</item>
 		<item>26</item>
-		<item>27</item>	
+		<item>27</item>
 		<item>28</item>
 	</string-array>
-	
-	
-	<string-array name="countryCodeArray">
-		<item>USA</item>		
+
+	<string-array name = "countryCodeArray">
+		<item>USA</item>
 		<item>Andorra</item>
 		<item>UAE</item>
 		<item>Afghanistan</item>
@@ -462,7 +334,7 @@
 		<item>Belize</item>
 		<item>Canada</item>
 		<item>Cocos (Keeling) Islands</item>
-		<item>Congo, The Democratic Repulic Of The</item>
+		<item>Congo, The Democratic Republic Of The</item>
 		<item>Central African Republic</item>
 		<item>Congo</item>
 		<item>Switzerland</item>
@@ -512,7 +384,7 @@
 		<item>Equatorial Guinea</item>
 		<item>Greece</item>
 		<item>South Georgia And The South Sandwich Islands</item>
-		<item>Guatemala</item>		
+		<item>Guatemala</item>
 		<item>Guam</item>
 		<item>Guinea-Bissau</item>
 		<item>Guyana</item>
@@ -520,7 +392,7 @@
 		<item>Heard Island And McDonald Islands</item>
 		<item>Honduras</item>
 		<item>Croatia</item>
-		<item>Haiti</item>		
+		<item>Haiti</item>
 		<item>Hungary</item>
 		<item>Indonesia</item>
 		<item>Ireland</item>
@@ -545,7 +417,7 @@
 		<item>Korea, Democratic People\'s Republic Of</item>
 		<item>Korea, Republic Of</item>
 		<item>Kuwait</item>
-		<item>Catman Islands</item>
+		<item>Cayman Islands</item>
 		<item>Kazakhstan</item>
 		<item>Lao People\'s Democratic Republic</item>
 		<item>Lebanon</item>
@@ -583,7 +455,7 @@
 		<item>Namibia</item>
 		<item>New Caledonia</item>
 		<item>Niger</item>
-		<item>Norfold Island</item>
+		<item>Norfolk Island</item>
 		<item>Nigeria</item>
 		<item>Nicaragua</item>
 		<item>Netherlands</item>
@@ -611,7 +483,7 @@
 		<item>Reunion</item>
 		<item>Romania</item>
 		<item>Serbia</item>
-		<item>Russia</item>
+		<item>Russian Federation</item>
 		<item>Rwanda</item>
 		<item>Saudi Arabia</item>
 		<item>Solomon Islands</item>
@@ -620,7 +492,7 @@
 		<item>Sweden</item>
 		<item>Singapore</item>
 		<item>Saint Helena</item>
-		<item>Slovennia</item>
+		<item>Slovenia</item>
 		<item>Svalbard And Jan Mayen</item>
 		<item>Slovakia</item>
 		<item>Sierra Leone</item>
@@ -655,7 +527,7 @@
 		<item>Uzbekistan</item>
 		<item>Holy See (Vatican City State)</item>
 		<item>Saint Vincent And The Grenadines</item>
-		<item>Venezuela</item>
+		<item>Venezuela, Bolivarian Republic of</item>
 		<item>Virgin Islands, British</item>
 		<item>Virgin Islands, US</item>
 		<item>Viet Nam</item>
@@ -670,359 +542,321 @@
 		<item>Korea alternate 1</item>
 		<item>Korea alternate 2</item>
 		<item>Korea alternate 3</item>
-		<item>Korea alternate 4</item>	
+		<item>Korea alternate 4</item>
 	</string-array>
-	<string-array name="countryCodeValues">
-		<item>US</item>
-		<item>AD</item>
-		<item>AE</item>
-		<item>AF</item>
-		<item>AG</item>
-		<item>AI</item>
-		<item>AL</item>
-		<item>AM</item>
-		<item>AN</item>
-		<item>AO</item>
-		<item>AQ</item>
-		<item>AR</item>
-		<item>AS</item>
-		<item>AT</item>
-		<item>AU</item>
-		<item>AW</item>
-		<item>AX</item>
-		<item>AZ</item>
-		<item>BA</item>
-		<item>BB</item>
-		<item>BD</item>
-		<item>BE</item>
-		<item>BF</item>
-		<item>BG</item>
-		<item>BH</item>
-		<item>BI</item>
-		<item>BJ</item>
-		<item>BM</item>
-		<item>BN</item>
-		<item>BO</item>
-		<item>BR</item>
-		<item>BS</item>
-		<item>BT</item>
-		<item>BV</item>
-		<item>BW</item>
-		<item>BY</item>
-		<item>BZ</item>
-		<item>CA</item>
-		<item>CC</item>
-		<item>CD</item>
-		<item>CF</item>
-		<item>CG</item>
-		<item>CH</item>
-		<item>CI</item>
-		<item>CK</item>
-		<item>CL</item>
-		<item>CM</item>
-		<item>CN</item>
-		<item>CO</item>
-		<item>CR</item>
-		<item>CU</item>
-		<item>CV</item>
-		<item>CX</item>
-		<item>CY</item>
-		<item>CZ</item>
-		<item>DE</item>
-		<item>DJ</item>
-		<item>DK</item>
-		<item>DM</item>
-		<item>DO</item>
-		<item>DZ</item>
-		<item>EZ</item>
-		<item>EE</item>
-		<item>EG</item>
-		<item>EH</item>
-		<item>ER</item>
-		<item>ES</item>
-		<item>ET</item>
-		<item>FI</item>
-		<item>FJ</item>
-		<item>FK</item>
-		<item>FM</item>
-		<item>FO</item>
-		<item>FR</item>
-		<item>GA</item>
-		<item>GB</item>
-		<item>GD</item>
-		<item>GE</item>
-		<item>GF</item>
-		<item>GG</item>
-		<item>GH</item>
-		<item>GI</item>
-		<item>GL</item>
-		<item>GM</item>
-		<item>GN</item>
-		<item>GP</item>
-		<item>GQ</item>
-		<item>GR</item>
-		<item>GS</item>
-		<item>GT</item>			
-		<item>GU</item>
-		<item>GW</item>
-		<item>GY</item>
-		<item>HK</item>
-		<item>HM</item>
-		<item>HN</item>
-		<item>HR</item>
-		<item>HT</item>
-		<item>HU</item>
-		<item>ID</item>
-		<item>IE</item>
-		<item>IL</item>
-		<item>IM</item>
-		<item>IN</item>
-		<item>IO</item>
-		<item>IQ</item>
-		<item>IR</item>
-		<item>IS</item>
-		<item>IT</item>
-		<item>JE</item>	
-		<item>JM</item>
-		<item>JO</item>
-		<item>JP</item>
-		<item>KE</item>
-		<item>KG</item>
-		<item>KH</item>
-		<item>KI</item>
-		<item>KM</item>
-		<item>KN</item>
-		<item>KP</item>
-		<item>KR</item>
-		<item>KW</item>
-		<item>KY</item>
-		<item>KZ</item>
-		<item>LA</item>
-		<item>LB</item>
-		<item>LC</item>
-		<item>LI</item>
-		<item>LK</item>
-		<item>LR</item>
-		<item>LS</item>
-		<item>LT</item>
-		<item>LU</item>
-		<item>LV</item>
-		<item>LY</item>
-		<item>MA</item>
-		<item>MC</item>
-		<item>MD</item>
-		<item>ME</item>
-		<item>MG</item>	
-		<item>MH</item>
-		<item>MK</item>
-		<item>ML</item>
-		<item>MM</item>
-		<item>MN</item>
-		<item>MO</item>
-		<item>MP</item>
-		<item>MQ</item>
-		<item>MR</item>
-		<item>MS</item>	
-		<item>MT</item>
-		<item>MU</item>
-		<item>MV</item>
-		<item>MW</item>
-		<item>MX</item>
-		<item>MY</item>
-		<item>MZ</item>
-		<item>NA</item>
-		<item>NC</item>
-		<item>NE</item>
-		<item>NF</item>
-		<item>NG</item>
-		<item>NI</item>
-		<item>NL</item>
-		<item>NO</item>
-		<item>NP</item>
-		<item>NR</item>
-		<item>NU</item>
-		<item>NZ</item>
-		<item>OM</item>
-		<item>PA</item>
-		<item>PE</item>
-		<item>PF</item>
-		<item>PG</item>
-		<item>PH</item>
-		<item>PK</item>
-		<item>PL</item>
-		<item>PM</item>
-		<item>PN</item>
-		<item>PR</item>
-		<item>PS</item>
-		<item>PT</item>
-		<item>PW</item>
-		<item>PY</item>
-		<item>QA</item>
-		<item>RE</item>
-		<item>RO</item>
-		<item>RS</item>
-		<item>RU</item>
-		<item>RW</item>
-		<item>SA</item>
-		<item>SB</item>
-		<item>SC</item>
-		<item>SD</item>
-		<item>SE</item>
-		<item>SG</item>
-		<item>SH</item>
-		<item>SI</item>
-		<item>SJ</item>
-		<item>SK</item>
-		<item>SL</item>
-		<item>SM</item>
-		<item>SN</item>
-		<item>SO</item>
-		<item>SR</item>
-		<item>ST</item>
-		<item>SV</item>
-		<item>SY</item>
-		<item>SZ</item>
-		<item>TC</item>
-		<item>TD</item>
-		<item>TF</item>
-		<item>TG</item>
-		<item>TH</item>
-		<item>TJ</item>
-		<item>TK</item>
-		<item>TL</item>
-		<item>TM</item>
-		<item>TN</item>
-		<item>TO</item>
-		<item>TR</item>
-		<item>TT</item>
-		<item>TV</item>
-		<item>TW</item>
-		<item>TZ</item>
-		<item>UA</item>
-		<item>UG</item>
-		<item>UM</item>
-		<item>UY</item>
-		<item>UZ</item>
-		<item>VA</item>
-		<item>VC</item>
-		<item>VE</item>
-		<item>VG</item>
-		<item>VI</item>
-		<item>VN</item>
-		<item>VU</item>
-		<item>WF</item>
-		<item>WS</item>
-		<item>YE</item>
-		<item>YT</item>
-		<item>ZA</item>
-		<item>ZM</item>
-		<item>ZW</item>
-		<item>K1</item>
-		<item>K2</item>
-		<item>K3</item>
-		<item>K4</item>		
-	</string-array>
-
-	
-	<string-array name="prFlagArray">
-		<item>Enable</item>
-		<item>Disable</item>
-	</string-array>
-	<string-array name="prFlagValues">
-		<item>1</item>
-		<item>o</item>
-	</string-array>
-	
-
-	<!--
-		***************** Fire Wall Settings ************
-	-->
-
-
-	<string-array name="portarray">
-		<item>5000</item>
-		<item>6000</item>
-		<item>4444</item>
-		<item>4448</item>
-		<item>4455</item>
-		<item>4456</item>
-	</string-array>
-	<string-array name="portvalues">
-		<item>5000</item>
-		<item>6000</item>
-		<item>4444</item>
-		<item>4448</item>
-		<item>4455</item>
-		<item>4456</item>
-	</string-array>
-	<string-array name="portarray1">
-		<item>5000</item>
-		<item>6000</item>
-		<item>4444</item>
-		<item>4448</item>
-		<item>4455</item>
-		<item>4456</item>
-	</string-array>
-	<string-array name="portvalues1">
-		<item>172.16.10.120</item>
-		<item>172.16.10.12</item>
-		<item>172.16.10.20</item>
-		<item>172.16.10.10</item>
-		<item>172.16.10.24</item>
-		<item>172.16.10.28</item>
+	<string-array name = "countryCodeValues">
+		<item>US,REGDOMAIN_FCC</item>
+		<item>AD,REGDOMAIN_WORLD</item>
+		<item>AE,REGDOMAIN_WORLD</item>
+		<item>AF,REGDOMAIN_WORLD</item>
+		<item>AG,REGDOMAIN_NO_5GHZ</item>
+		<item>AI,REGDOMAIN_NO_5GHZ</item>
+		<item>AL,REGDOMAIN_WORLD</item>
+		<item>AM,REGDOMAIN_NO_5GHZ</item>
+		<item>AN,REGDOMAIN_WORLD</item>
+		<item>AO,REGDOMAIN_NO_5GHZ</item>
+		<item>AQ,REGDOMAIN_WORLD</item>
+		<item>AR,REGDOMAIN_HI_5GHZ</item>
+		<item>AS,REGDOMAIN_FCC</item>
+		<item>AT,REGDOMAIN_ETSI</item>
+		<item>AU,REGDOMAIN_ETSI</item>
+		<item>AW,REGDOMAIN_NO_5GHZ</item>
+		<item>AX,REGDOMAIN_WORLD</item>
+		<item>AZ,REGDOMAIN_WORLD</item>
+		<item>BA,REGDOMAIN_WORLD</item>
+		<item>BB,REGDOMAIN_WORLD</item>
+		<item>BD,REGDOMAIN_WORLD</item>
+		<item>BE,REGDOMAIN_ETSI</item>
+		<item>BF,REGDOMAIN_WORLD</item>
+		<item>BG,REGDOMAIN_HI_5GHZ</item>
+		<item>BH,REGDOMAIN_WORLD</item>
+		<item>BI,REGDOMAIN_WORLD</item>
+		<item>BJ,REGDOMAIN_WORLD</item>
+		<item>BM,REGDOMAIN_ETSI</item>
+		<item>BN,REGDOMAIN_WORLD</item>
+		<item>BO,REGDOMAIN_WORLD</item>
+		<item>BR,REGDOMAIN_WORLD</item>
+		<item>BS,REGDOMAIN_WORLD</item>
+		<item>BT,REGDOMAIN_WORLD</item>
+		<item>BV,REGDOMAIN_WORLD</item>
+		<item>BW,REGDOMAIN_WORLD</item>
+		<item>BY,REGDOMAIN_WORLD</item>
+		<item>BZ,REGDOMAIN_WORLD</item>
+		<item>CA,REGDOMAIN_FCC</item>
+		<item>CC,REGDOMAIN_WORLD</item>
+		<item>CD,REGDOMAIN_WORLD</item>
+		<item>CF,REGDOMAIN_WORLD</item>
+		<item>CG,REGDOMAIN_WORLD</item>
+		<item>CH,REGDOMAIN_WORLD</item>
+		<item>CI,REGDOMAIN_WORLD</item>
+		<item>CK,REGDOMAIN_WORLD</item>
+		<item>CL,REGDOMAIN_WORLD</item>
+		<item>CM,REGDOMAIN_WORLD</item>
+		<item>CN,REGDOMAIN_HI_5GHZ</item>
+		<item>CO,REGDOMAIN_WORLD</item>
+		<item>CR,REGDOMAIN_WORLD</item>
+		<item>CU,REGDOMAIN_WORLD</item>
+		<item>CV,REGDOMAIN_WORLD</item>
+		<item>CX,REGDOMAIN_WORLD</item>
+		<item>CY,REGDOMAIN_WORLD</item>
+		<item>CZ,REGDOMAIN_HI_5GHZ</item>
+		<item>DE,REGDOMAIN_ETSI</item>
+		<item>DJ,REGDOMAIN_WORLD</item>
+		<item>DK,REGDOMAIN_ETSI</item>
+		<item>DM,REGDOMAIN_WORLD</item>
+		<item>DO,REGDOMAIN_NO_5GHZ</item>
+		<item>DZ,REGDOMAIN_WORLD</item>
+		<item>EC,REGDOMAIN_WORLD</item>
+		<item>EE,REGDOMAIN_HI_5GHZ</item>
+		<item>EG,REGDOMAIN_WORLD</item>
+		<item>EH,REGDOMAIN_WORLD</item>
+		<item>ER,REGDOMAIN_WORLD</item>
+		<item>ES,REGDOMAIN_ETSI</item>
+		<item>ET,REGDOMAIN_WORLD</item>
+		<item>FI,REGDOMAIN_WORLD</item>
+		<item>FJ,REGDOMAIN_WORLD</item>
+		<item>FK,REGDOMAIN_WORLD</item>
+		<item>FM,REGDOMAIN_WORLD</item>
+		<item>FO,REGDOMAIN_WORLD</item>
+		<item>FR,REGDOMAIN_ETSI</item>
+		<item>GA,REGDOMAIN_WORLD</item>
+		<item>GB,REGDOMAIN_ETSI</item>
+		<item>GD,REGDOMAIN_WORLD</item>
+		<item>GE,REGDOMAIN_HI_5GHZ</item>
+		<item>GF,REGDOMAIN_WORLD</item>
+		<item>GG,REGDOMAIN_ETSI</item>
+		<item>GH,REGDOMAIN_WORLD</item>
+		<item>GI,REGDOMAIN_WORLD</item>
+		<item>GL,REGDOMAIN_WORLD</item>
+		<item>GM,REGDOMAIN_WORLD</item>
+		<item>GN,REGDOMAIN_WORLD</item>
+		<item>GP,REGDOMAIN_WORLD</item>
+		<item>GQ,REGDOMAIN_WORLD</item>
+		<item>GR,REGDOMAIN_ETSI</item>
+		<item>GS,REGDOMAIN_WORLD</item>
+		<item>GT,REGDOMAIN_NO_5GHZ</item>
+		<item>GU,REGDOMAIN_WORLD</item>
+		<item>GW,REGDOMAIN_WORLD</item>
+		<item>GY,REGDOMAIN_WORLD</item>
+		<item>HK,REGDOMAIN_WORLD</item>
+		<item>HM,REGDOMAIN_WORLD</item>
+		<item>HN,REGDOMAIN_WORLD</item>
+		<item>HR,REGDOMAIN_HI_5GHZ</item>
+		<item>HT,REGDOMAIN_WORLD</item>
+		<item>HU,REGDOMAIN_HI_5GHZ</item>
+		<item>ID,REGDOMAIN_APAC</item>
+		<item>IE,REGDOMAIN_ETSI</item>
+		<item>IL,REGDOMAIN_WORLD</item>
+		<item>IM,REGDOMAIN_ETSI</item>
+		<item>IN,REGDOMAIN_WORLD</item>
+		<item>IO,REGDOMAIN_ETSI</item>
+		<item>IQ,REGDOMAIN_WORLD</item>
+		<item>IR,REGDOMAIN_WORLD</item>
+		<item>IS,REGDOMAIN_WORLD</item>
+		<item>IT,REGDOMAIN_ETSI</item>
+		<item>JE,REGDOMAIN_ETSI</item>
+		<item>JM,REGDOMAIN_WORLD</item>
+		<item>JO,REGDOMAIN_WORLD</item>
+		<item>JP,REGDOMAIN_JAPAN</item>
+		<item>KE,REGDOMAIN_WORLD</item>
+		<item>KG,REGDOMAIN_WORLD</item>
+		<item>KH,REGDOMAIN_WORLD</item>
+		<item>KI,REGDOMAIN_WORLD</item>
+		<item>KM,REGDOMAIN_WORLD</item>
+		<item>KN,REGDOMAIN_WORLD</item>
+		<item>KP,REGDOMAIN_KOREA</item>
+		<item>KR,REGDOMAIN_KOREA</item>
+		<item>KW,REGDOMAIN_WORLD</item>
+		<item>KY,REGDOMAIN_WORLD</item>
+		<item>KZ,REGDOMAIN_WORLD</item>
+		<item>LA,REGDOMAIN_WORLD</item>
+		<item>LB,REGDOMAIN_WORLD</item>
+		<item>LC,REGDOMAIN_WORLD</item>
+		<item>LI,REGDOMAIN_ETSI</item>
+		<item>LK,REGDOMAIN_WORLD</item>
+		<item>LR,REGDOMAIN_WORLD</item>
+		<item>LS,REGDOMAIN_WORLD</item>
+		<item>LT,REGDOMAIN_HI_5GHZ</item>
+		<item>LU,REGDOMAIN_ETSI</item>
+		<item>LV,REGDOMAIN_HI_5GHZ</item>
+		<item>LY,REGDOMAIN_WORLD</item>
+		<item>MA,REGDOMAIN_WORLD</item>
+		<item>MC,REGDOMAIN_ETSI</item>
+		<item>MD,REGDOMAIN_WORLD</item>
+		<item>ME,REGDOMAIN_WORLD</item>
+		<item>MG,REGDOMAIN_WORLD</item>
+		<item>MH,REGDOMAIN_WORLD</item>
+		<item>MK,REGDOMAIN_WORLD</item>
+		<item>ML,REGDOMAIN_WORLD</item>
+		<item>MM,REGDOMAIN_WORLD</item>
+		<item>MN,REGDOMAIN_HI_5GHZ</item>
+		<item>MO,REGDOMAIN_WORLD</item>
+		<item>MP,REGDOMAIN_WORLD</item>
+		<item>MQ,REGDOMAIN_WORLD</item>
+		<item>MR,REGDOMAIN_WORLD</item>
+		<item>MS,REGDOMAIN_WORLD</item>
+		<item>MT,REGDOMAIN_WORLD</item>
+		<item>MU,REGDOMAIN_WORLD</item>
+		<item>MV,REGDOMAIN_WORLD</item>
+		<item>MW,REGDOMAIN_WORLD</item>
+		<item>MX,REGDOMAIN_WORLD</item>
+		<item>MY,REGDOMAIN_HI_5GHZ</item>
+		<item>MZ,REGDOMAIN_WORLD</item>
+		<item>NA,REGDOMAIN_WORLD</item>
+		<item>NC,REGDOMAIN_WORLD</item>
+		<item>NE,REGDOMAIN_WORLD</item>
+		<item>NF,REGDOMAIN_WORLD</item>
+		<item>NG,REGDOMAIN_WORLD</item>
+		<item>NI,REGDOMAIN_WORLD</item>
+		<item>NL,REGDOMAIN_ETSI</item>
+		<item>NO,REGDOMAIN_WORLD</item>
+		<item>NP,REGDOMAIN_WORLD</item>
+		<item>NR,REGDOMAIN_WORLD</item>
+		<item>NU,REGDOMAIN_WORLD</item>
+		<item>NZ,REGDOMAIN_ETSI</item>
+		<item>OM,REGDOMAIN_WORLD</item>
+		<item>PA,REGDOMAIN_WORLD</item>
+		<item>PE,REGDOMAIN_WORLD</item>
+		<item>PF,REGDOMAIN_WORLD</item>
+		<item>PG,REGDOMAIN_WORLD</item>
+		<item>PH,REGDOMAIN_WORLD</item>
+		<item>PK,REGDOMAIN_WORLD</item>
+		<item>PL,REGDOMAIN_WORLD</item>
+		<item>PM,REGDOMAIN_WORLD</item>
+		<item>PN,REGDOMAIN_WORLD</item>
+		<item>PR,REGDOMAIN_FCC</item>
+		<item>PS,REGDOMAIN_WORLD</item>
+		<item>PT,REGDOMAIN_ETSI</item>
+		<item>PW,REGDOMAIN_WORLD</item>
+		<item>PY,REGDOMAIN_WORLD</item>
+		<item>QA,REGDOMAIN_WORLD</item>
+		<item>RE,REGDOMAIN_WORLD</item>
+		<item>RO,REGDOMAIN_HI_5GHZ</item>
+		<item>RS,REGDOMAIN_HI_5GHZ</item>
+		<item>RU,REGDOMAIN_WORLD</item>
+		<item>RW,REGDOMAIN_WORLD</item>
+		<item>SA,REGDOMAIN_WORLD</item>
+		<item>SB,REGDOMAIN_WORLD</item>
+		<item>SC,REGDOMAIN_ETSI</item>
+		<item>SD,REGDOMAIN_WORLD</item>
+		<item>SE,REGDOMAIN_ETSI</item>
+		<item>SG,REGDOMAIN_APAC</item>
+		<item>SH,REGDOMAIN_WORLD</item>
+		<item>SI,REGDOMAIN_HI_5GHZ</item>
+		<item>SJ,REGDOMAIN_WORLD</item>
+		<item>SK,REGDOMAIN_HI_5GHZ</item>
+		<item>SL,REGDOMAIN_WORLD</item>
+		<item>SM,REGDOMAIN_WORLD</item>
+		<item>SN,REGDOMAIN_WORLD</item>
+		<item>SO,REGDOMAIN_WORLD</item>
+		<item>SR,REGDOMAIN_WORLD</item>
+		<item>ST,REGDOMAIN_WORLD</item>
+		<item>SV,REGDOMAIN_WORLD</item>
+		<item>SY,REGDOMAIN_WORLD</item>
+		<item>SZ,REGDOMAIN_WORLD</item>
+		<item>TC,REGDOMAIN_WORLD</item>
+		<item>TD,REGDOMAIN_WORLD</item>
+		<item>TF,REGDOMAIN_WORLD</item>
+		<item>TG,REGDOMAIN_WORLD</item>
+		<item>TH,REGDOMAIN_WORLD</item>
+		<item>TJ,REGDOMAIN_WORLD</item>
+		<item>TK,REGDOMAIN_WORLD</item>
+		<item>TL,REGDOMAIN_WORLD</item>
+		<item>TM,REGDOMAIN_WORLD</item>
+		<item>TN,REGDOMAIN_WORLD</item>
+		<item>TO,REGDOMAIN_WORLD</item>
+		<item>TR,REGDOMAIN_WORLD</item>
+		<item>TT,REGDOMAIN_WORLD</item>
+		<item>TV,REGDOMAIN_WORLD</item>
+		<item>TW,REGDOMAIN_HI_5GHZ</item>
+		<item>TZ,REGDOMAIN_WORLD</item>
+		<item>UA,REGDOMAIN_HI_5HZ</item>
+		<item>UG,REGDOMAIN_WORLD</item>
+		<item>UM,REGDOMAIN_FCC</item>
+		<item>UY,REGDOMAIN_WORLD</item>
+		<item>UZ,REGDOMAIN_HI_5HZ</item>
+		<item>VA,REGDOMAIN_ETSI</item>
+		<item>VC,REGDOMAIN_WORLD</item>
+		<item>VE,REGDOMAIN_HI_5HZ</item>
+		<item>VG,REGDOMAIN_ETSI</item>
+		<item>VI,REGDOMAIN_FCC</item>
+		<item>VN,REGDOMAIN_WORLD</item>
+		<item>VU,REGDOMAIN_WORLD</item>
+		<item>WF,REGDOMAIN_WORLD</item>
+		<item>WS,REGDOMAIN_WORLD</item>
+		<item>YE,REGDOMAIN_WORLD</item>
+		<item>YT,REGDOMAIN_WORLD</item>
+		<item>ZA,REGDOMAIN_WORLD</item>
+		<item>ZM,REGDOMAIN_WORLD</item>
+		<item>ZW,REGDOMAIN_WORLD</item>
+		<item>K1,REGDOMAIN_KOREA</item>
+		<item>K2,REGDOMAIN_KOREA</item>
+		<item>K3,REGDOMAIN_KOREA</item>
+		<item>K4,REGDOMAIN_KOREA</item>
 	</string-array>
 
 	<!--  ***************** Network Settings ************ -->
 
-	<string-array name="dhcpServerArray">
-		<item>Enable</item>
-		<item>Disable</item>
-	</string-array>
-	<string-array name="dhcpServerValues">
-		<item>Enable</item>
-		<item>Disable</item>
-	</string-array>
-
-	<string-array name="nwConfigArray">
+	<string-array name = "nwConfigArray">
 		<item>Accept unless in deny list</item>
 		<item>Deny unless in accept list</item>
 	</string-array>
-	<string-array name="nwConfigValues">
+	<string-array name = "nwConfigValues">
 		<item>0</item>
 		<item>1</item>
-	</string-array>	
+	</string-array>
 
 	<!--  ***************** Basic Wireless Settings Keys ************ -->
 
-	<string-array name="bws_keys">		
+	<string-array name = "bws_keys">
 		<item>hw_mode</item>
 		<item>ssid</item>
 		<item>channel</item>
-		<item>auth_algs</item>				
-	</string-array>
-	
-	<!--  ***************** Basic Wireless Settings Keys ************ -->
-	
-	<string-array name="station_lst_opt">		
+		<item>auth_algs</item>
+	</string-array>	
+
+	<string-array name = "station_lst_opt">
 		<item>Disassociate</item>
-		<item>Cancel</item>						
+		<item>Cancel</item>
 	</string-array>
 	
-	<!--
-		***************** Default Profile values ************
-	-->
+	<!--  *****************Advanced Wireless Settings Keys ************ -->
 	
-	<string-array name="internalKeys">
-		<item>status</item>
-		<item>broadcast_ssid</item>
-		<item>protect_flag</item>
-		<item>dhcp_check</item>
-		<item>configkey</item>	
-		<item>wpsstate</item>	
-		<item>config_methods</item>
+	<string-array name = "str_arr_aws_keys">
+		<item>tx_power</item>
+		<item>data_rate</item>
+		<item>fragm_threshold</item>
+		<item>rts_threshold</item>
+		<item>beacon_int</item>
+		<item>dtim_period</item>
+		<item>country_code</item>		
+	</string-array>
+	
+	<string-array name = "str_arr_aws_checkbx_keys">
+		<item>protection_flag</item>
+		<item>wmm_enabled</item>
+		<item>intra_bss_forward</item>
+		<item>regulatory_domain</item>
 	</string-array>
 
-	<string-array name="defaultProfileKeys">
+	<!--  *************** WSS_WEP Keys ************ -->
+
+	<string-array name = "str_arr_wep_keys">		
+		<item>wep_key0</item>
+		<item>wep_key1</item>
+		<item>wep_key2</item>
+		<item>wep_key3</item>
+	</string-array>
+	
+	<string-array name = "str_arr_wpapsk_keys">		
+		<item>wpa_pairwise</item>		
+		<item>rsn_pairwise</item>
+		<item>wpa_passphrase</item>
+		<item>wpa_group_rekey</item>
+	</string-array>	
+		
+	<!--	***************** Default Profile values ************  -->
+	<string-array name = "defaultProfileKeys">
 		<item>wps_state</item>
 		<item>hw_mode</item>
 		<item>ssid</item>
@@ -1034,7 +868,7 @@
 		<item>wep_key1</item>
 		<item>wep_key2</item>
 		<item>wep_key3</item>
-		<item>wep_default_key</item>		
+		<item>wep_default_key</item>
 		<item>wpa_pairwise</item>
 		<item>wpa_passphrase</item>
 		<item>rsn_pairwise</item>
@@ -1044,14 +878,51 @@
 		<item>fragm_threshold</item>
 		<item>rts_threshold</item>
 		<item>beacon_int</item>
-		<item>dtim_period</item>		
-		<item>protection_flag</item>		
-		<item>wmm_enabled</item>		
+		<item>dtim_period</item>
+		<item>protection_flag</item>
+		<item>wmm_enabled</item>
 		<item>intra_bss_forward</item>
-		<item>regulatory_domain</item>	
-		<item>country_code</item>					
+		<item>regulatory_domain</item>
+		<item>country_code</item>
 		<item>macaddr_acl</item>
 		<item>allow_list</item>
-		<item>deny_list</item>					
+		<item>deny_list</item>
 	</string-array>
+
+	<string-array name = "mac_allow_keylst">
+		<item>allow1</item>
+		<item>allow2</item>
+		<item>allow3</item>
+		<item>allow4</item>
+		<item>allow5</item>
+		<item>allow6</item>
+		<item>allow7</item>
+		<item>allow8</item>
+		<item>allow9</item>
+		<item>allow10</item>
+		<item>allow11</item>
+		<item>allow12</item>
+		<item>allow13</item>
+		<item>allow14</item>
+		<item>allow15</item>
+	</string-array>
+	<string-array name = "mac_deny_keylst">
+		<item>deny1</item>
+		<item>deny2</item>
+		<item>deny3</item>
+		<item>deny4</item>
+		<item>deny5</item>
+		<item>deny6</item>
+		<item>deny7</item>
+		<item>deny8</item>
+		<item>deny9</item>
+		<item>deny10</item>
+		<item>deny11</item>
+		<item>deny12</item>
+		<item>deny13</item>
+		<item>deny14</item>
+		<item>deny15</item>
+
+	</string-array>
+
 </resources>

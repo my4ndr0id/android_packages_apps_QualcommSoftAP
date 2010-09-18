@@ -1,71 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-	<PreferenceCategory android:title="Basic Wireless Settings" android:enabled="true" android:key="bws_catag1">
-	<CheckBoxPreference 	
-		android:summaryOn="Enabled" 
-		android:summaryOff="Disabled" 		
-		android:key="wpsstate"
-		android:title="WPS"		
-		>
-	</CheckBoxPreference>
+	<PreferenceCategory android:title="@string/act_name_ws_bws">
+		<CheckBoxPreference 	
+			android:summaryOn="Enabled" 
+			android:summaryOff="Disabled" 		
+			android:key="wpsstate"
+			android:title="@string/str_bws_pref_check_wps"/>
+		
 		<ListPreference 
-		android:entries="@array/wpsEnrollArray" 
-		android:entryValues="@array/wpsEnrollValues" 
-		android:key="config_methods"		
-		android:title="WPS Enroll Method"
-		android:enabled="false"
-		>
-	    </ListPreference>
-	</PreferenceCategory>		
-	<PreferenceCategory 
-		android:key="cat_manual"		
-		android:enabled="true"
-		android:shouldDisableView="true">
-			
+			android:entries="@array/wpsEnrollArray" 
+			android:entryValues="@array/wpsEnrollValues" 
+			android:key="config_methods"		
+			android:title="@string/str_bws_pref_list_enroll"		
+			android:dependency="wpsstate"/>
 		<ListPreference 
-			android:title="Network Mode"
+			android:title="@string/str_bws_pref_list_nwmode"
 			android:key="hw_mode" 
 			android:defaultValue="BG"
 			android:entries="@array/networkArray" 
-			android:entryValues="@array/networkValues">
-				
-		</ListPreference>
-							
+			android:entryValues="@array/networkValues" />				
 		<EditTextPreference 
-			android:title="Network Name / SSID" 
+			android:title="@string/str_bws_pref_edit_nwssid" 
 			android:key="ssid"
 			android:defaultValue="SoftAP"
-			android:dialogMessage="Must be 1 to 32 chars"
+			android:dialogMessage="@string/str_bws_pref_edit_nwssid_dialog"
 			android:singleLine="true"
 			android:maxLength="32"
-			android:hint="Enter SSID/Network Name"	>
-		</EditTextPreference>
-	
-	<ListPreference 
-		android:entries="@array/freqArray" 
-		android:entryValues="@array/freqValues" 
-		android:key="channel" 
-		android:defaultValue="Auto" 
-		android:title="Channel(Frequency)">
-	</ListPreference>
-	
-	<ListPreference 
-			android:title="Authentication Mode"
+			android:hint="Enter SSID/Network Name" />
+		<ListPreference 		
+			android:key="channel"		 
+			android:title="@string/str_bws_pref_list_chfreq" />
+		<ListPreference 
+			android:title="@string/str_bws_pref_list_authmode"
 			android:key="auth_algs" 
 			android:defaultValue="Open"
 			android:entries="@array/authArray" 
-			android:entryValues="@array/authValues">
-	</ListPreference>
-		
-	<CheckBoxPreference 
-		android:summaryOn="Enabled" 
-		android:summaryOff="Disabled" 
-		android:key="broadcast_ssid"
-		android:title="SSID Broadcast"
-		android:defaultValue="true">
-	</CheckBoxPreference>
-	
-</PreferenceCategory>
-	
+			android:entryValues="@array/authValues" />		
+		<CheckBoxPreference 
+			android:summaryOn="Enabled" 
+			android:summaryOff="Disabled" 
+			android:key="broadcast_ssid"
+			android:title="@string/str_bws_pref_check_brodssid"
+			android:defaultValue="true"/>		
+	</PreferenceCategory>		
 </PreferenceScreen>

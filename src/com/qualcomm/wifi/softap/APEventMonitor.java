@@ -3,23 +3,35 @@ package com.qualcomm.wifi.softap;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
+/**
+ * 
+ * This class implements access point monitor thread, which waits for
+ * an incoming events via native method calls and broadcasts it.
+ *
+ */
 public class APEventMonitor implements Runnable
 {
 	private final String ACTION_RECEIVER="qualcomm.action.SEND";
-	String eventstr;
-	QWiFiSoftApCfg qcsoftapcfg;
-	Context context;
-	Thread thread;
-	boolean KILLED;
+	private String eventstr;
+	private QWiFiSoftApCfg qcsoftapcfg;
+	private Context context;
+	private Thread thread;
+	static boolean KILLED = true;
 	
+	/**
+	 *  Its an initialization part of APEventMonitor class.
+	 *  It also starts the APEventMonitor thread.     
+	 */
 	public APEventMonitor(QWiFiSoftApCfg ref,Context context){
 		qcsoftapcfg=ref;
 		this.context=context;
 		thread = new Thread(this);
-		thread.start();		
+		thread.start();	
 	}
-
+	/**
+	 * Its a thread body, which calls native methods to receive events and
+	 * broadcasts it.
+	 */
 	public void run() {
 		Log.d("APEventMonitor","Thread Started");
 		if(qcsoftapcfg.SapOpenNetlink()){
@@ -46,7 +58,7 @@ public class APEventMonitor implements Runnable
 		} else {
 			Log.d("APEventMonitor","Connection Failed");
 		}
-	
+	Log.d("APEventMonitor","Returning from APEventMonitor");
 	}
 	
 }
