@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -36,18 +36,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
 import android.os.Looper;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -60,9 +62,17 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.qualcomm.wifi.softap.ns.MACFilterSettings;
 import com.qualcomm.wifi.softap.ns.NetworkSettings;
+import com.qualcomm.wifi.softap.ss.APstatistics;
+import com.qualcomm.wifi.softap.ss.AssociatedStation;
 import com.qualcomm.wifi.softap.ss.StationStatus;
+import com.qualcomm.wifi.softap.ws.AdvancedWireless;
 import com.qualcomm.wifi.softap.ws.BasicWirelessSettings;
+import com.qualcomm.wifi.softap.ws.WSS_WEP;
+import com.qualcomm.wifi.softap.ws.WSS_WPAPSK;
+import com.qualcomm.wifi.softap.ws.WirelessSecuritySettings;
 import com.qualcomm.wifi.softap.ws.WirelessSettings;
 /** 
  * The class contains the Application Main screen display, it provides UI to turn on/turn off
@@ -75,10 +85,16 @@ import com.qualcomm.wifi.softap.ws.WirelessSettings;
  * {@link com.qualcomm.wifi.softap.prof.ProfileSettings}<br>
  */
 public class MainMenuSettings extends PreferenceActivity implements OnPreferenceClickListener, 
-OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {	
+OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
+	public static MainMenuSettings myRef;
+	private TimeOut timer;
+	private boolean bShutDownEvent=false;
+	private AlertDialog mmsalertdialog,mmsalrtdlgShutdownEvt,mmsalrtdlgNoChngsShutdownEvt;
+	private Builder mmsbuilder,mmsbldrShutdownEvt,mmsbldrNoChngsShutdownEvt;
 	private String sKeyVal;	
 	private int index;
 	private String sResponse;
+	private static Looper looper;
 	public static Context app_Context;
 	public static String TAG;
 	public boolean bStatusRunning = false;
@@ -102,47 +118,73 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 	private NotificationManager notifyManager;
 
 	public static QWiFiSoftApCfg mSoftAPCfg;	
-	public static StationStatus ssrefToMMS;	
+	public static AssociatedStation ssrefToMMS;	
 	private ArrayList<String> changes_List = new ArrayList<String>();
 	Intent intent;
+	public static QWiFiSoftApEvent mmsEvent;
+	public static MACFilterSettings mfsEvent;
+	public static NetworkSettings nsEvent;
+	public static WirelessSettings wsEvent;
+	public static StationStatus ssEvent;
+	public static BasicWirelessSettings bwsEvent;
+	public static APstatistics apsEvent;
+	public static AssociatedStation asEvent;
+	public static WirelessSecuritySettings wssEvent;
+	public static WSS_WEP wss_wepEvent;
+	public static WSS_WPAPSK wss_wpapskEvent;
+	public static AdvancedWireless awEvent;
 
+	public void broadcastEvent(String event){		
+		if(mmsEvent!=null)mmsEvent.EventHandler(event);
+		if(mfsEvent!=null)mfsEvent.EventHandler(event);
+		if(nsEvent!=null) nsEvent.EventHandler(event);
+		if(apsEvent!=null) apsEvent.EventHandler(event);
+		if(asEvent!=null) asEvent.EventHandler(event);
+		if(ssEvent!=null) ssEvent.EventHandler(event);
+		if(awEvent!=null) awEvent.EventHandler(event);
+		if(bwsEvent!=null) bwsEvent.EventHandler(event);
+		if(wssEvent!=null) wssEvent.EventHandler(event);
+		if(wsEvent!=null) wsEvent.EventHandler(event);
+		if(wss_wepEvent!=null) wss_wepEvent.EventHandler(event);
+		if(wss_wpapskEvent!=null) wss_wpapskEvent.EventHandler(event);
+	}
+	
 	/**
 	 * This method handles any events received in the string format. two main events Association and Dissociation,
 	 * for Association the wps dialog if launched, is dismissed and for either Association/Disassociation the station status
 	 * Activity if running, will be restarted. 
 	 */
-	public void EventHandler(String evt) {
-		Log.e("EVTHLR", evt);		
+	public void EventHandler(String evt) {		
+		Log.e("EVTHLR", evt);
+		broadcastEvent(evt);
 		showNotification(evt);
-		Intent i = new Intent(MainMenuSettings.this, StationStatus.class);
-		if(evt.contains(L10NConstants.STATION_102) || evt.contains(L10NConstants.STATION_103)){			
-			Log.d("EventHandler", "Asso/Disso of StationStatus:"+bStatusRunning);
-			if(bStatusRunning) {
-				if(ssrefToMMS!=null) {
-					Log.d("EventHandler", evt+" REF NOT NULL StationStatus:"+bStatusRunning);					
-					ssrefToMMS.finish();
-					startActivityForResult(i, 0);
-					bStatusRunning = true;
-				}
+		if(evt.contains(L10NConstants.STATION_105)){		
+			bShutDownEvent = true;
+			if(wsEvent == null && nsEvent == null 
+					&& ssEvent == null){				
+				Log.e("105 Event","bShutDownEvent no chld activity");
+				myRef.runOnUiThread(new Runnable(){
+
+					public void run() {
+						// TODO Auto-generated method stub
+						shutdownEvent();
+					}
+					
+				});
+				
 			}
-			Log.d(TAG,"Recieved 102 Station");
-			if(evt.contains(L10NConstants.STATION_102)){
-				if(BasicWirelessSettings.wpsAlertDialog!=null) {				
-					Log.d(TAG,"dismissing wpsAlertDialogue");
-					BasicWirelessSettings.wpsAlertDialog.dismiss();
-				}
-			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * This method initialize all the resources such as preferences, notification manager.
 	 * It also set the status checked/unchecked based on the daemon value
 	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.main_settings_pref);
+		myRef=this;
+		addPreferencesFromResource(R.xml.main_settings_pref);		
 
 		//get the application context
 		app_Context=getApplicationContext();
@@ -185,7 +227,11 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 
 		//get command for enable_softap to get the response from the daemon		
 		Log.d(TAG,"Getting Command "+ L10NConstants.GET_CMD_PREFIX + L10NConstants.ENABLE_SOFTAP);
-		sKeyVal = mSoftAPCfg.SapSendCommand(L10NConstants.GET_CMD_PREFIX + L10NConstants.ENABLE_SOFTAP);
+		try{
+			sKeyVal = mSoftAPCfg.SapSendCommand(L10NConstants.GET_CMD_PREFIX + L10NConstants.ENABLE_SOFTAP);
+		}catch(Exception e){
+			Log.d(TAG,"Exception:"+ e);
+		}
 		Log.d(TAG,"Received response " + sKeyVal);
 
 		//On success from the daemon for enable_softap start a thread to display a looper progress dialog
@@ -196,9 +242,9 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 				enableOrDisable(true, L10NConstants.VAL_ONE);				
 				if(dialInitial!=null)
 					dialInitial.cancel();
-			} else
+			}else
 				enableOrDisable(false, L10NConstants.VAL_ZERO);			
-		} else 
+		}else 
 			wifiCheckEnable.setEnabled(false);
 
 		orgPrefEditor.putString("wpsKey", "");
@@ -209,7 +255,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			saveBtn.setEnabled(false);
 			resetBtn.setEnabled(false);
 		}
-		intent = new Intent();
+		intent = new Intent();	
 	}
 
 	/**
@@ -221,29 +267,38 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		case R.id.save:
 			new DialogThr(L10NConstants.DIALOG_SAVE);
 			saveChanges(defSharPref, orgSharPref, "");
-			saveBtn.setEnabled(false);
+	 		saveBtn.setEnabled(false);
 			if(dialSave != null)
-				dialSave.cancel();			
+				dialSave.cancel();		
 			break;
 		case R.id.reset:
 			new DialogThr(L10NConstants.DIALOG_RESET);
-			mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX + "reset_to_default");			
-			getSoftAPValues();			
-			saveBtn.setEnabled(false);	
+			try{
+				mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX + "reset_to_default");
+			}catch(Exception e){
+				Log.d(TAG,"Exception:"+ e);
+			}
+			getSoftAPValues();
+			saveBtn.setEnabled(false);
 			if(dialReset != null) 
 				dialReset.cancel();
 			preferenceChanged = false;
 			break;
 		}		
 	}
+	
 	/**
 	 * This method issues the get command to set all the values of softAP.
 	 */
 	public void getSoftAPValues(){
 		defaultKey = getResources().getStringArray(R.array.defaultProfileKeys);
 		for(int j = 0; j < defaultKey.length; j++){
-			Log.d(TAG,"Getting Command "+L10NConstants.GET_CMD_PREFIX +defaultKey[j]);			
-			sKeyVal = mSoftAPCfg.SapSendCommand(L10NConstants.GET_CMD_PREFIX +defaultKey[j]);
+			Log.d(TAG,"Getting Command "+L10NConstants.GET_CMD_PREFIX +defaultKey[j]);
+			try{
+				sKeyVal = mSoftAPCfg.SapSendCommand(L10NConstants.GET_CMD_PREFIX +defaultKey[j]);
+			}catch(Exception e){
+				Log.d(TAG,"Exception:"+ e);
+			}
 			Log.d(TAG,"Received response " + sKeyVal);	
 			index = sKeyVal.indexOf("=");	
 
@@ -256,7 +311,6 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 							sCheckKeyValue = sKeyVal.substring(index+1,sKeyVal.indexOf(","));
 							defPrefEditor.putString("autoChannel", sCheckKeyValue);
 							orgPrefEditor.putString("autoChannel", sCheckKeyValue);
-
 							sCheckKeyValue = sKeyVal.substring(sKeyVal.indexOf(",")+1,sKeyVal.length());
 							defPrefEditor.putString(L10NConstants.CHNL_KEY, sCheckKeyValue);
 							orgPrefEditor.putString(L10NConstants.CHNL_KEY, sCheckKeyValue);
@@ -264,14 +318,14 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 						} else {
 							SetDefaultValues(defaultKey[j]);
 						}
-					} else if(defaultKey[j].equals("allow_list")){						
+					}else if(defaultKey[j].equals("allow_list")){						
 						getAllowDenyValue(defaultKey[j],"allow_list");
 					}else if(defaultKey[j].equals("deny_list")){						
 						getAllowDenyValue(defaultKey[j],"deny_list");
-					} else {
+					}else {
 						if(defaultKey[j].equals(L10NConstants.COUNTRY_KEY)){
 							sKeyVal = sKeyVal.substring(0, sKeyVal.length()-1);	
-							} else if(defaultKey[j].equals("wep_key0") || defaultKey[j].equals("wep_key1")||													
+						}else if(defaultKey[j].equals("wep_key0") || defaultKey[j].equals("wep_key1")||													
 								defaultKey[j].equals("wep_key2") || defaultKey[j].equals("wep_key3")){
 							if(sKeyVal.contains("\"")) {
 								Log.d(TAG,"WEP_KEy"+ sKeyVal.substring(0,sKeyVal.indexOf("=")+1)
@@ -283,13 +337,22 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 						SetDefaultValues(defaultKey[j]);
 					}
 				}
-			} else {					
-				defPrefEditor.putString(defaultKey[j], "");
-				orgPrefEditor.putString(defaultKey[j], "");
+			}else {					
+				if(defaultKey[j].equals(L10NConstants.AP_SHUT_TIMER)){
+					defPrefEditor.putString(defaultKey[j], "0");
+					orgPrefEditor.putString(defaultKey[j], "0");
+				} else if (defaultKey[j].equals(L10NConstants.COUNTRY_KEY)){
+					defPrefEditor.putString(defaultKey[j], "US,REGDOMAIN_FCC");
+					orgPrefEditor.putString(defaultKey[j], "US,REGDOMAIN_FCC");
+				} else {
+					defPrefEditor.putString(defaultKey[j], "");
+					orgPrefEditor.putString(defaultKey[j], "");
+				}
 				commitPref();
 			}
 		}
 	}
+	
 	/**
 	 * This method shows a dialog box to save settings when application is tried to close without clicking 'Save Settings'
 	 * button for changes.
@@ -299,10 +362,10 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		super.onKeyDown(keyCode, event);		
 		if(keyCode == KeyEvent.KEYCODE_BACK) {
 			if(saveBtn.isEnabled()){
-				new AlertDialog.Builder(this)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setTitle(getString(R.string.alert_save))
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				mmsbuilder=new AlertDialog.Builder(this);
+				mmsbuilder.setIcon(android.R.drawable.ic_dialog_alert);
+				mmsbuilder.setTitle(getString(R.string.alert_save));
+				mmsalertdialog=mmsbuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {	
 						saveChanges(defSharPref, orgSharPref, "");
 						saveBtn.setEnabled(false);						
@@ -313,13 +376,15 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 						SetOriginalValues();						
 						finish();
 					}
-				}).create().show();
+				}).create();
+				mmsalertdialog.show();
 			}			
 			return true;
 		}else {			
 			return super.onKeyDown(keyCode, event);				
 		}
 	}
+	
 	/**
 	 * This method configures the softAP with changes made by the user.
 	 * 
@@ -338,7 +403,11 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		if(changedCmdLst != null){
 			for(int i = 0; i < changedCmdLst.size(); i++) {
 				Log.d(TAG,"Sending Command "+L10NConstants.SET_CMD_PREFIX +changedCmdLst.get(i));
-				sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX + changedCmdLst.get(i));
+				try{
+					sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX + changedCmdLst.get(i));
+				}catch(Exception e){
+					Log.d(TAG,"Exception:"+ e);
+				}
 				Log.d(TAG,"Received Response "+sResponse);
 
 				String sSetKey = changedCmdLst.get(i).substring(0, changedCmdLst.get(i).indexOf("="));				
@@ -365,19 +434,23 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 						int index = changedCmdLst.get(i).indexOf("=");
 						String value = changedCmdLst.get(i).substring(index+1, changedCmdLst.get(i).length());						
 						StringTokenizer st = new StringTokenizer(value);
-						
 						while(st.hasMoreElements()){										
 							String nextToken = st.nextToken();
 							if(sSetKey.contains(L10NConstants.ALLOW)) {	
 								removeAllowDenyList(orgSharPref, L10NConstants.ALLOW, nextToken);								
 							}else{
-								removeAllowDenyList(orgSharPref, L10NConstants.ALLOW, nextToken);								
+								removeAllowDenyList(orgSharPref, L10NConstants.DENY, nextToken);								
 							}										
-						}						
-					} else {
+						}				
+					}else if(sSetKey.equals(L10NConstants.AP_SHUT_TIMER)){
+						Log.d(TAG, "Changed Ap Shutdown timer Code : "+changedCmdLst.get(i));							
+						orgPrefEditor.putString(sSetKey, defSharPref.getString(L10NConstants.AP_SHUT_TIMER, ""));
+						commitPref();			
+					}else{ 
+						//Code need to be revamped			
 						if(sSetValue.contains("\"")) {							
 							sSetValue = sSetValue.substring(1, sSetValue.length()-1);
-						} 
+						}
 						if(sSetKey.equals(L10NConstants.COUNTRY_KEY)){
 							Log.d(TAG, "Changed Country Code : "+changedCmdLst.get(i));							
 							orgPrefEditor.putString(sSetKey, defSharPref.getString(L10NConstants.COUNTRY_KEY, ""));
@@ -385,19 +458,22 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 						}else{
 							orgPrefEditor.putString(sSetKey, sSetValue);
 							commitPref();
-						}							
+						}		
 					} 
 					successCount++;
 				} else {
 					sSetValue = orgSharPref.getString(sSetKey, "");
 					defPrefEditor.putString(sSetKey, sSetValue);
-					defPrefEditor.commit();					
-
+					defPrefEditor.commit();
 					unsupportedCount++;					
 				} 
 			}
 			if(changedCmdLst.size() == (successCount+unsupportedCount)){
-				sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX +"commit");	
+				try{
+					sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX +"commit");
+				}catch(Exception e){
+					Log.d(TAG,"Exception:"+ e);
+				}
 				sCommitResponse = sResponse;				
 				Log.d(TAG,"Received Response ..... "+sResponse);
 				Log.d(TAG, "Commited Changes");	
@@ -418,7 +494,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			bIsValid = false;
 		}
 	}
-	
+
 	/**
 	 * This method will remove the particular MAC Address from the original preference file
 	 *  
@@ -444,7 +520,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			}
 		}		
 	}
-	
+
 	/**
 	 * This method will add MAC address in the Original Preference file
 	 * 
@@ -452,23 +528,24 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 	 * @param lstType MAC Address List Type
 	 * @param macAddr MAC Address, which has to be added
 	 */
-	private void addAllowDenyList(SharedPreferences orgFile,
+	public void addAllowDenyList(SharedPreferences orgFile,
 			String lstType, String macAddr) {
+		SharedPreferences.Editor editor = orgFile.edit();
 		for (int m = 1; m <= L10NConstants.MAX_LENGTH; m++) {
 			String checkvalue = orgFile.getString(lstType+m, "");	
 			if(checkvalue.equals("")) {
-				orgPrefEditor.putString(lstType+m, macAddr);
-				orgPrefEditor.commit();
+				editor.putString(lstType+m, macAddr);
+				editor.commit();
 				break;
 			}
 		}	
 	}
+	
 	/**
 	 * This thread implements a method for launching different progress bar dialog boxes.
 	 */
 	public class DialogThr implements Runnable {
 		int dialogID;
-		public Handler mHandler;
 		Thread thread;
 		/**
 		 * Its a thread initializer and also starts the thread. 
@@ -482,7 +559,8 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		 * Thread body to launch the  progress bar dialog.
 		 */
 		public void run() {
-			Looper.prepare();			
+			Looper.prepare();	
+			looper = Looper.myLooper();
 			switch(dialogID) {
 			case L10NConstants.DIALOG_OFF: 
 				showDialog(L10NConstants.DIALOG_OFF);
@@ -503,6 +581,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			Looper.loop();
 		}
 	}
+	
 	/**
 	 * This method handles the preference click events to redirect to the corresponding preference activity screen.
 	 */
@@ -520,6 +599,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		} 
 		return true;
 	}	
+	
 	/**
 	 * This method handles the preference change event for Wi-Fi Turn Off/Turn On. 
 	 */
@@ -531,9 +611,13 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 				Log.d(TAG,"Notification Removed");
 				notifyManager.cancel(R.string.notification);			
 				Log.d(TAG,"Sending Command "+L10NConstants.SET_CMD_PREFIX 
-						+ L10NConstants.ENABLE_SOFTAP+"=0");	
-				sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX 
 						+ L10NConstants.ENABLE_SOFTAP+"=0");
+				try{
+					sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX 
+							+ L10NConstants.ENABLE_SOFTAP+"=0");
+				}catch(Exception e){
+					Log.d(TAG,"Exception:"+ e);
+				}
 				Log.d(TAG, "Received Response ........: " + sResponse);				
 				if(sResponse.equals(L10NConstants.SUCCESS)){					
 					isValid = enableOrDisable(false, L10NConstants.VAL_ZERO);//enableFalse();					
@@ -545,9 +629,13 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			} else {
 				new DialogThr(L10NConstants.DIALOG_ON);				
 				Log.d(TAG,"Sending Command "+L10NConstants.SET_CMD_PREFIX 
-						+ L10NConstants.ENABLE_SOFTAP+"=1");				
-				sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX 
-						+ L10NConstants.ENABLE_SOFTAP+"=1");				
+						+ L10NConstants.ENABLE_SOFTAP+"=1");
+				try{
+					sResponse = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX 
+							+ L10NConstants.ENABLE_SOFTAP+"=1");
+				}catch(Exception e){
+					Log.d(TAG,"Exception:"+ e);
+				}
 				if(sResponse.equals(L10NConstants.SUCCESS)){					
 					Log.d(TAG,"Received response "+sResponse);					
 					isValid = enableOrDisable(true, L10NConstants.VAL_ONE);//enableTrue();					
@@ -558,9 +646,11 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 				if(dialOn!=null)
 					dialOn.cancel();
 			}		
-		}		
-		return isValid;
+		}	
+		
+		return isValid; 
 	}
+
 	/**
 	 * This method will Enable or Disable the WifiSoftAP based on the parameters
 	 * 
@@ -574,14 +664,11 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			getSoftAPValues();						
 			showNotification();	
 			Log.d(TAG,"Launching APEventMonitor Thread");
-			if(APEventMonitor.KILLED){
-				new APEventMonitor(mSoftAPCfg,getApplicationContext());
-				APEventMonitor.KILLED = false;
-			}
+			mSoftAPCfg.SapStartEventMonitor();
 		} else {
 			saveBtn.setEnabled(bStatus);		
 			preferenceChanged = bStatus;
-			killMonitorThread();
+			mSoftAPCfg.SapStopEventMonitor();
 		}
 		orgPrefEditor.putString(L10NConstants.ENABLE_SOFTAP, sVal);
 		defPrefEditor.putString(L10NConstants.ENABLE_SOFTAP, sVal);		
@@ -605,7 +692,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		notifyManager.notify(L10NConstants.EVENT_ID, notification);
 		notifyManager.cancel(L10NConstants.EVENT_ID);
 	}
-	
+
 	/**
 	 * This method shows a notification in the status bar for Wi-Fi softAP Turn On/Turn Off events.
 	 */
@@ -618,9 +705,14 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 	}
 
 	public void onResume(){
-		super.onResume();	
+		super.onResume();		
 		if(preferenceChanged){	
 			saveBtn.setEnabled(true);
+		}
+		if(bShutDownEvent){
+			Log.e("105 Event","bShutDownEvent onResume");
+			shutdownEvent();
+			bShutDownEvent=false;
 		}
 	}
 	/**
@@ -646,7 +738,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		}
 		return null;
 	}
-	
+
 	private ProgressDialog dialogCreater(String msg){
 		ProgressDialog temp=new ProgressDialog(this);
 		temp.setMessage(msg);
@@ -655,6 +747,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		temp.setCancelable(true);
 		return temp;
 	}
+	
 	/**
 	 * This method compares the current preference file with the previous preference file. 
 	 */
@@ -676,7 +769,7 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			String copyDeny = defSharPref.getString(L10NConstants.DENY+m, "");	
 			String orgAllow = orgSharPref.getString(L10NConstants.ALLOW+m, "");			
 			String orgyDeny = orgSharPref.getString(L10NConstants.DENY+m, "");
-			
+
 			compareAllowDenyList(orgSharPref, copyAllow, L10NConstants.ALLOW);
 			compareAllowDenyList(orgSharPref, copyDeny, L10NConstants.DENY);
 			compareAllowDenyList(defSharPref, orgAllow, L10NConstants.ALLOW);
@@ -808,15 +901,16 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 	public void showWarningDialog(String bws_flag, SharedPreferences copyFile, SharedPreferences orgFile) {
 		SharedPreferences.Editor copyEdit =  copyFile.edit();
 		if(!bws_flag.equals("BWS")) {					
-			new AlertDialog.Builder(this)				                
-			.setTitle(getString(R.string.str_dialog_warning))
-			.setMessage(getString(R.string.mms_screen_alert) +
-					getString(R.string.common_append_alert_wpa))				
-					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							// No Action
-						}			
-					}).create().show();	
+			mmsbuilder=new AlertDialog.Builder(this);				                
+			mmsbuilder.setTitle(getString(R.string.str_dialog_warning));
+			mmsbuilder.setMessage(getString(R.string.mms_screen_alert) +
+					getString(R.string.common_append_alert_wpa));				
+			mmsalertdialog=mmsbuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					// No Action
+				}			
+			}).create();
+			mmsalertdialog.show();	
 		}		
 		String prevSecurity = orgFile.getString(L10NConstants.SEC_MODE_KEY, "");
 		String prevNWMode = orgFile.getString(L10NConstants.HW_MODE_KEY, "");
@@ -856,8 +950,8 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 	 * Set the Default Values to the WifiSoftAP
 	 * 
 	 * @param Value will be set to this key
+	 * 
 	 */
-
 	private void SetDefaultValues(String key) {
 		String value = sKeyVal.substring(index + 1, sKeyVal.length());			
 
@@ -915,12 +1009,17 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 		}
 	}	
 
-	public void killMonitorThread(){
-		APEventMonitor.KILLED=true;
-	}
-
+	/**
+	 * this method does the clean up function for MainMenuSettings Activity like terminating loopers and dialogs.
+	 */
 	public void onDestroy() {
 		super.onDestroy();		
+		if(looper!=null){
+			looper.quit();
+		}
+		if(mmsalertdialog!=null && mmsalertdialog.isShowing()){
+			mmsalertdialog.cancel();
+		}
 	}
 
 	@Override
@@ -933,11 +1032,81 @@ OnPreferenceChangeListener, OnClickListener, QWiFiSoftApEvent {
 			}
 		}
 	}
+	
 	/**
 	 * This method commits the changes made.
 	 */
 	public void commitPref(){
 		defPrefEditor.commit();
 		orgPrefEditor.commit();
+	}
+
+	private class TimeOut extends CountDownTimer {
+		//Handler handler = new Handler();
+		int counter = 0;
+		
+		/**
+		 * timer initializer
+		 */
+		public TimeOut(long millisInFuture, long countDownInterval) {			
+			super(millisInFuture, countDownInterval);		
+			Log.d(TAG, "Timer Created");
+		}
+		
+		/**
+		 * This method dismisses the wps dialog when timer expires.
+		 */
+		@Override
+		public void onFinish() {
+			if(mmsalrtdlgShutdownEvt!=null && mmsalrtdlgShutdownEvt.isShowing()){
+				mmsalrtdlgShutdownEvt.cancel();				
+				onPreferenceChange(wifiCheckEnable, false);
+			}
+			if(mmsalrtdlgNoChngsShutdownEvt!=null && mmsalrtdlgNoChngsShutdownEvt.isShowing()){
+				mmsalrtdlgNoChngsShutdownEvt.cancel();
+				onPreferenceChange(wifiCheckEnable, false);
+			}
+		
+		}
+
+		@Override
+		public void onTick(long millisUntilFinished) {
+			Log.d(L10NConstants.TAG_BWS,"Timer is running count:"+(++counter));
+		}
+	}
+	/**
+	 * this method shows a dialog for 105(shutdown) event and runs timer on it. 
+	 */
+	private void shutdownEvent(){		
+		timer = new TimeOut(L10NConstants.SHUTDOWN_TIME, 1000);
+		timer.start();
+		if(preferenceChanged){	
+			mmsbldrShutdownEvt = new AlertDialog.Builder(this);
+			mmsbldrShutdownEvt.setIcon(android.R.drawable.ic_dialog_alert);
+			mmsbldrShutdownEvt.setTitle("SoftAP is turned off because of inactivity, do you want to save the changes");
+			mmsalrtdlgShutdownEvt=mmsbldrShutdownEvt.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {					
+					saveChanges(defSharPref, orgSharPref, "");
+					onPreferenceChange(wifiCheckEnable,false);
+				}
+			}).setNegativeButton("No", new DialogInterface.OnClickListener() {					
+				public void onClick(DialogInterface dialog, int which) {
+					onPreferenceChange(wifiCheckEnable, false);
+				}
+			}).create();
+			mmsalrtdlgShutdownEvt.show(); 
+			
+		} else {
+			Log.d(TAG, "Displaying the dialog");
+			mmsbldrNoChngsShutdownEvt = new AlertDialog.Builder(this);
+			mmsbldrNoChngsShutdownEvt.setIcon(android.R.drawable.ic_dialog_alert);
+			mmsbldrNoChngsShutdownEvt.setTitle("SoftAP is turned off because of inactivity");
+			mmsalrtdlgNoChngsShutdownEvt=mmsbldrNoChngsShutdownEvt.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					onPreferenceChange(wifiCheckEnable, false);					
+				}}).create();
+			mmsalrtdlgNoChngsShutdownEvt.show();					
+		}
+		bShutDownEvent=false;	
 	}
 }

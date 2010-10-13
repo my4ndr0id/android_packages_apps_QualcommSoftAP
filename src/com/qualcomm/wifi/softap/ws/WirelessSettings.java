@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -21,8 +21,8 @@
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ *  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
@@ -41,7 +41,10 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.qualcomm.wifi.softap.L10NConstants;
+import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
+
 
 /**
  * This class provides an option to configure various flavors of Wireless Settings ie Basic Wireless settings,
@@ -52,7 +55,8 @@ import com.qualcomm.wifi.softap.R;
  *{@link com.qualcomm.wifi.softap.ws.AdvancedWireless}
  */
 
-public class WirelessSettings extends Activity {
+public class WirelessSettings extends Activity{
+	private QWiFiSoftApCfg qwifisoftAPCfg;
 	private ListView wsList;
 	private String[] wsLstvalue;
 	Intent i;
@@ -65,8 +69,10 @@ public class WirelessSettings extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		qwifisoftAPCfg=MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.wsEvent=this;
 		setContentView(R.layout.ws);
-
+		
 		wsLstvalue = getResources().getStringArray(R.array.wslist);
 		wsList = (ListView) findViewById(R.id.wslstview);
 		wsList.setAdapter(new ArrayAdapter<String>(this,
@@ -92,5 +98,14 @@ public class WirelessSettings extends Activity {
 				startActivity(i);
 			}
 		});
+	}
+	public void EventHandler(String evt) {		
+		if(evt.contains(L10NConstants.STATION_105)) 
+			finish();
+	}
+	public void onDestroy(){
+		super.onDestroy();
+		MainMenuSettings.wsEvent = null;
+		Log.d(L10NConstants.TAG_WS,"destroying WirelessSettings");
 	}
 }

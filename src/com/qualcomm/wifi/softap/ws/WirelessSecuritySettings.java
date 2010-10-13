@@ -1,26 +1,26 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
-
+ 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
  * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
  * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
@@ -31,6 +31,7 @@
 package com.qualcomm.wifi.softap.ws;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,10 +41,13 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.util.Log;
 
 import com.qualcomm.wifi.softap.L10NConstants;
 import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
+
 
 /**
  * This class displays the options to select the security mode for the wireless security<br>
@@ -51,9 +55,12 @@ import com.qualcomm.wifi.softap.R;
  * {@link com.qualcomm.wifi.softap.ws.WSS_WEP}
  * {@link com.qualcomm.wifi.softap.ws.WSS_WPAPSK}
  */
-public class WirelessSecuritySettings extends PreferenceActivity implements OnPreferenceChangeListener {	
+public class WirelessSecuritySettings extends PreferenceActivity implements OnPreferenceChangeListener{	
+	private AlertDialog wssalertdialog;
+	private Builder wssbuilder;
 	private String SM_NM_CHECK = "";
-
+	private String WPA_CHECK="";
+	private QWiFiSoftApCfg qwifisoftAPCfg;
 	private Intent intent;
 	private SharedPreferences defSharPref, orgSharPref;
 	private ListPreference securityModeLst;
@@ -69,6 +76,8 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		qwifisoftAPCfg = MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.wssEvent=this;
 		addPreferencesFromResource(R.xml.wss_pref);
 		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);		 
 		orgSharPref = getSharedPreferences(L10NConstants.CONFIG_FILE_NAME, MODE_PRIVATE);
@@ -98,6 +107,7 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 		String sNM = defSharPref.getString(L10NConstants.HW_MODE_KEY, "");
 		String sWpa = defSharPref.getString(L10NConstants.WPA_PAIR_KEY, "");
 		String sRsn = defSharPref.getString(L10NConstants.RSN_PAIR_KEY, "");
+		String sWps = defSharPref.getString(L10NConstants.WPS_KEY, "");
 		
 		if (index != -1) {
 			String lstEntry = (String) securityModeLst.getEntries()[index];
@@ -112,7 +122,11 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 					getString(R.string.common_append_alert_wep);
 				}
 				if(sNM.equals(L10NConstants.SM_N_ONLY) || sNM.equals(L10NConstants.SM_N)) {						
-					showAlertDialog(lstEntry);
+					showAlertDialog(lstEntry,SM_NM_CHECK);
+					return false;
+				} else if(sWps.equals(L10NConstants.VAL_ONE)){
+					WPA_CHECK = getString(R.string.wep_screen_alert_wpa);
+					showAlertDialog(lstEntry,WPA_CHECK);
 					return false;
 				} else{
 					securityModeLst.setSummary(lstEntry);
@@ -134,17 +148,17 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 				if(sNM.equals(L10NConstants.SM_N_ONLY) || sNM.equals(L10NConstants.SM_N)){
 					if(newValue.equals(L10NConstants.VAL_TWO)){
 						if(sWpa.equals(L10NConstants.WPA_ALG_TKIP))
-							showAlertDialog(lstEntry);
+							showAlertDialog(lstEntry,SM_NM_CHECK);
 						else
 							startActivity(intent);
 					}else if(newValue.equals(L10NConstants.VAL_THREE)){
 						if(sRsn.equals(L10NConstants.WPA_ALG_TKIP))
-							showAlertDialog(lstEntry);
+							showAlertDialog(lstEntry,SM_NM_CHECK);
 						 else
 							startActivity(intent);
 					} else{
 						if(sWpa.equals(L10NConstants.WPA_ALG_TKIP) || sRsn.equals(L10NConstants.WPA_ALG_TKIP))
-							showAlertDialog(lstEntry);
+							showAlertDialog(lstEntry,SM_NM_CHECK);
 						else
 							startActivity(intent);
 					}							
@@ -163,16 +177,30 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 	 * Show alert dialog box displaying the warning message 
 	 * @param lstEntry is the type of security mode selected
 	 */
-	private void showAlertDialog(final String lstEntry){
-		new AlertDialog.Builder(this) 
-		.setTitle(getString(R.string.str_dialog_warning))
-		.setMessage(SM_NM_CHECK)
-		.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
+	private void showAlertDialog(final String lstEntry, String message){
+		wssbuilder=new AlertDialog.Builder(this); 
+		wssbuilder.setTitle(getString(R.string.str_dialog_warning));
+		wssbuilder.setMessage(message);
+		wssalertdialog=wssbuilder.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				if(!lstEntry.equals(L10NConstants.WEP)) {
 					startActivity(intent);
 				}				
 			}			
-		}).create().show();	
+		}).create();
+		wssalertdialog.show();	
+	}
+
+	public void EventHandler(String evt) {			
+		if(evt.contains(L10NConstants.STATION_105)) 
+			finish();
+	}
+	public void onDestroy(){
+		super.onDestroy();
+		MainMenuSettings.wssEvent = null;
+		if(wssalertdialog != null && wssalertdialog.isShowing()){
+			wssalertdialog.cancel();
+		}
+		Log.d("WirelessSecuritySettings","destroying WirelessSecuritySettings");
 	}
 }

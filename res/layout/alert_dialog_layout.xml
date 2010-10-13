@@ -23,6 +23,6 @@
         android:gravity="fill_horizontal"
         android:singleLine="true"
         android:focusable="true"
-        android:maxLength="32"
-        android:numeric="integer" />
+        android:maxLength="8"
+        android:numeric="integer"/>
 </LinearLayout>

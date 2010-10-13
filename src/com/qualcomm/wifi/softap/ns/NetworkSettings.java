@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -27,7 +27,6 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package com.qualcomm.wifi.softap.ns;
 
 import android.app.Activity;
@@ -41,6 +40,8 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.qualcomm.wifi.softap.L10NConstants;
+import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
 
 /** 
@@ -51,9 +52,10 @@ import com.qualcomm.wifi.softap.R;
  */
 public class NetworkSettings extends Activity
 {
+	private QWiFiSoftApCfg qwifisoftAPCfg;
 	private ListView nwList;
 	private String[] nwLstvalue;
-
+	
 	/**
 	 * This method inflates MAC Filter Setting View on the screen from <b>network.xml</b>
 	 * 
@@ -63,6 +65,8 @@ public class NetworkSettings extends Activity
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		qwifisoftAPCfg=MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.nsEvent=this;
 		Log.d(L10NConstants.TAG_NS, "onCreate - NetworkSettings");
 		setContentView(R.layout.network);
 		nwLstvalue  = getResources().getStringArray(R.array.nwslist);
@@ -77,5 +81,15 @@ public class NetworkSettings extends Activity
 				}
 			}
 		});
+	}
+
+	public void EventHandler(String evt) {		
+		if(evt.contains(L10NConstants.STATION_105)) 
+			finish();
+	}
+	public void onDestroy(){
+		super.onDestroy();
+		MainMenuSettings.nsEvent = null;
+		Log.d(L10NConstants.TAG_NS,"destroying NetworkSettings");
 	}
 }

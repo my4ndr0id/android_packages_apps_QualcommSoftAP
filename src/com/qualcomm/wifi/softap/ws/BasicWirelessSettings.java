@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -31,6 +31,7 @@
 package com.qualcomm.wifi.softap.ws;
 
 import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -49,8 +50,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -62,27 +61,31 @@ import android.widget.Toast;
 import com.qualcomm.wifi.softap.L10NConstants;
 import com.qualcomm.wifi.softap.MainMenuSettings;
 import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
-
 import com.qualcomm.wifi.softap.R;
+
 
 /**
  * This class implements basic wireless configuration settings<br> 
  * which includes network/ssid/channel/auth_mode settings<br>
  */
-public class BasicWirelessSettings extends PreferenceActivity implements OnPreferenceChangeListener {
-
+public class BasicWirelessSettings extends PreferenceActivity implements OnPreferenceChangeListener, android.content.DialogInterface.OnClickListener {
+	private Looper looper;
+	private AlertDialog bwsalertdialog;
+	private Builder bwsbuilder;
 	private String ssidVal,response,wpsKey;
 	private String[] keys;	
 	private static boolean prefChStatus;
 	private static String pinValue = null, regulatoryDomain ;		
 	private String[] freqArray, freqArrayValues;
 	private static String NW_MODE_WARNING;
+	private static String WPS_WARNING;
 	private boolean bNModeVerifyCheck;
 
 	private SharedPreferences defSharPref, orgSharPref;
 	private SharedPreferences.Editor defPrefEditor, orgPrefEditor;
 
-	public static ProgressDialog dialWPS;
+	public static ProgressDialog dialWPS,dialWPSsession,dialWPSpinentry;
+	private String pinEntryMsg;
 	private ListPreference  networkLst, freqLst, authLst, wpsEnrollLst;
 	private CheckBoxPreference broadChk, configLst;
 	private EditTextPreference ssidEdit;	
@@ -91,13 +94,10 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 	private Intent intent;
 
 	private ArrayList<Preference> prefLst;	
-	public QWiFiSoftApCfg mSoftAPCfg;
-	private timer timr;
+	private QWiFiSoftApCfg mSoftAPCfg;
+	private Timer timr;
 
 	public static MainMenuSettings mainMenuStngs;
-	private Builder wpsDialog;
-	public static AlertDialog wpsAlertDialog;	
-	private TextWatcher pinWatcher;
 
 	private String sRsn;
 	private String sWpa;
@@ -114,8 +114,9 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.basic_wireless_settings);
-		mainMenuStngs = new MainMenuSettings();
-		mSoftAPCfg = MainMenuSettings.mSoftAPCfg;	
+		mainMenuStngs = MainMenuSettings.myRef;		
+		mSoftAPCfg = MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.bwsEvent=this;
 
 		//Edit default and orgSharPref preference
 		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -131,7 +132,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 		broadChk = (CheckBoxPreference) findPreference("broadcast_ssid");	
 		wpsEnrollLst = (ListPreference) findPreference(L10NConstants.CONFIG_KEY);
 		wpsEnrollLst.setSummary(getString(R.string.str_bws_enroll));
-		ssidEdit = (EditTextPreference) findPreference("ssid");				
+		ssidEdit = (EditTextPreference) findPreference("ssid");
 		keys = getResources().getStringArray(R.array.bws_keys);
 
 		//set preference change listener to SSID Broadcast,WPS, WPS Enroll Method
@@ -143,7 +144,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 		prefLst.add(networkLst); 
 		prefLst.add(ssidEdit);
 		prefLst.add(freqLst); 
-		prefLst.add(authLst);  	
+		prefLst.add(authLst); 	
 
 		try{
 			//set WPS enroll method 'true' based on WPS check value in the preference
@@ -161,13 +162,13 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 				broadChk.setChecked(true);	
 
 			String countryCode = defSharPref.getString(L10NConstants.COUNTRY_KEY, "");
-			String cCode = countryCode; //added newly
+			String cCode = countryCode; 
 			if(!countryCode.equals("")){
 				// Extract country code value(eg:US) and regulatory domain(eg: REGDOMAIN_FCC) from pref file((eg: US,REGDOMAIN_FCC)
 				if(countryCode.contains(",")){
 					countryCode = countryCode.substring(0,countryCode.indexOf(","));					
 					regulatoryDomain = cCode.substring(cCode.indexOf(",")+1,cCode.length());					
-				} 					
+				}		
 				//Set the channel freqency based on the regulatory domain associated with the country code
 				//eg. US->Channel's=11, JP->Channel's=14
 				if(regulatoryDomain.equals("REGDOMAIN_FCC")||regulatoryDomain.equals("REGDOMAIN_WORLD")
@@ -221,7 +222,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 			public boolean onKey(View v, int keyCode, KeyEvent event) {					
 				ssidVal = editText.getText().toString();
 				if(ssidVal.equals("") ){
-					editText.setError("Can not be Null");
+					editText.setError("Value cannot be null");
 				} 
 				return false;
 			}			
@@ -233,6 +234,30 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 			}
 		});	
 	}
+
+	/**
+	 * This method computes Checksum for WPS PIN
+	 * @param iPin value from WPS PIN text box
+	 * @return
+	 */
+	public int ComputeChecksum(int iPin)
+	{
+		int iAccum = 0;
+		int iDigit;
+
+		iPin *= 10;
+		iAccum += 3 * ((iPin / 10000000) % 10);
+		iAccum += 1 * ((iPin / 1000000) % 10);
+		iAccum += 3 * ((iPin / 100000) % 10);
+		iAccum += 1 * ((iPin / 10000) % 10);
+		iAccum += 3 * ((iPin / 1000) % 10);
+		iAccum += 1 * ((iPin / 100) % 10);
+		iAccum += 3 * ((iPin / 10) % 10);
+
+		iDigit = (iAccum % 10);
+		return (10 - iDigit) % 10;
+	}
+
 
 	/**
 	 * This method implements change event handler in Basic wireless setting
@@ -261,80 +286,78 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 					// Inflate EditText and TextView on the Dialog box for WPS Pin
 					LayoutInflater factory = LayoutInflater.from(BasicWirelessSettings.this);
 					final View textEntryView = factory.inflate(R.layout.alert_dialog_layout, null);				
-					newPin = (EditText)textEntryView.findViewById(R.id.editText);
+					newPin = (EditText)textEntryView.findViewById(R.id.editText);					
 					view = (TextView) textEntryView.findViewById(R.id.txt_view);
-					view.setText("Must be 8 to 32 digits");		
+					view.setText("Enter 8 digits");	
 					newPin.setHint("Enter PIN");
 
-					// Handle text entry for WPS pin
-					pinWatcher = new TextWatcher() {						
-						public void onTextChanged(CharSequence s, int start, int before, int count) {
-							//do nothing
-						}						
-						public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-							//do nothing
-						}						
-						public void afterTextChanged(Editable s) {
-							String val = s.toString();
-							if(!val.equals("")){
-								if(!val.matches(L10NConstants.PIN_PATTERN)){									
-									newPin.setError("Min 8 Digits");
-								}else{									
-									newPin.setError(null);	
-								}	
-							}else
-								newPin.setError("Can not be null");
-						}
-					};
-					newPin.addTextChangedListener(pinWatcher);
-
-					new AlertDialog.Builder(BasicWirelessSettings.this)				                
-					.setTitle("Enter WPS PIN")
-					.setView(textEntryView)
-					.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
+					bwsbuilder=new AlertDialog.Builder(BasicWirelessSettings.this);				                
+					bwsbuilder.setTitle("Enter WPS PIN");
+					bwsbuilder.setView(textEntryView);
+					bwsalertdialog = bwsbuilder.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {						
 							pinValue = newPin.getText().toString();
 							if(!pinValue.equals("")){
-								if(pinValue.matches(L10NConstants.PIN_PATTERN)){	
-									Log.d(L10NConstants.TAG_BWS,"Sending Command "+ L10NConstants.SET_CMD_PREFIX +"config_methods=1 "+pinValue);
-									response = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX +"config_methods=1 "+pinValue);
-									Log.d(L10NConstants.TAG_BWS,"Response "+response);
-									response = L10NConstants.SUCCESS;
-									if(response.contains(L10NConstants.SUCCESS)){
-										//start counter 
-										startTimer();				
-										UpdateChanges(defSharPref,orgSharPref,preference.getKey());
-										showWpsDialog("PIN ENTRY", pinValue.toString());
-										Log.d(L10NConstants.TAG_BWS,"Response From Config_methods Success Reply "+response);
-									} else {
-										wpsKey = orgSharPref.getString("wpsKey", "");
-										UpdateChanges(orgSharPref,defSharPref,preference.getKey());
-										prefChStatus=false;
-										Log.d(L10NConstants.TAG_BWS,"Response From COnfig_methods UnSuccess Reply "+response);
+								if(pinValue.matches(L10NConstants.PIN_PATTERN)){
+									//Extract 8th digit
+									String sLastDigit = pinValue.substring(pinValue.length()-1, pinValue.length());
+									Log.d("Checksum", "sLastDigit = "+sLastDigit);
+									
+									//Compute checksum for 7 digits
+									int pinCheckSumValue = ComputeChecksum(Integer.parseInt(pinValue.substring(0, pinValue.length()-1)));
+									Log.d("Checksum", "pinValueCheck = "+pinCheckSumValue);
+									
+									//compare checksum value with 8th digit
+									if(pinCheckSumValue!=Integer.parseInt(sLastDigit))
+									{
+										Toast.makeText(getApplicationContext(), "PIN checksum failed. Please enter a valid PIN", 1).show();
+									}else
+									{
+										Log.d(L10NConstants.TAG_BWS,"Sending Command "+ L10NConstants.SET_CMD_PREFIX +"config_methods=1 "+pinValue);
+										try{
+										response = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX +"config_methods=1 "+pinValue);
+										}catch(Exception e){
+											Log.d(L10NConstants.TAG_BWS, "Exception :"+e);
+										}
+										Log.d(L10NConstants.TAG_BWS,"Response "+response);
+										response = L10NConstants.SUCCESS;
+										if(response.contains(L10NConstants.SUCCESS)){
+											UpdateChanges(defSharPref,orgSharPref,preference.getKey());		
+											pinEntryMsg="Enter PIN number"+" "+pinValue.toString()+" "+"on the client to connect...";
+											new DialogThrd(L10NConstants.DIALOG_WPS_PINENTRY);
+											Log.d(L10NConstants.TAG_BWS,"Response From Config_methods Success Reply "+response);
+										} else {
+											wpsKey = orgSharPref.getString("wpsKey", "");
+											UpdateChanges(orgSharPref,defSharPref,preference.getKey());
+											prefChStatus=false;
+											Log.d(L10NConstants.TAG_BWS,"Response From COnfig_methods UnSuccess Reply "+response);
+										}
 									}
 								} else {
-									Toast.makeText(getApplicationContext(), "Invalid PIN ", 1).show();								
+									Toast.makeText(getApplicationContext(), "Invalid PIN", 1).show();							
 								}								
 							} else {
-								Toast.makeText(getApplicationContext(), "Can not be Null ", 1).show();
+								Toast.makeText(getApplicationContext(), "Value cannot be null", 1).show();
 							}	
 						}				
 					}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							//do nothing
 						}
-					}).create().show();					
+					}).create();
+					bwsalertdialog.show();					
 				} else if(newValue.equals(L10NConstants.VAL_ZERO)){
 					Log.d(L10NConstants.TAG_BWS,"Sending Command "+L10NConstants.SET_CMD_PREFIX +preference.getKey()+"="+newValue);
-					if(mSoftAPCfg!=null)
+					try{
 						response = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX +preference.getKey()+"="+newValue);
+					}catch(Exception e){
+						Log.d(L10NConstants.TAG_BWS, "Exception :"+e);
+					}
 					Log.d(L10NConstants.TAG_BWS,"Response "+response);
 					if(response.contains(L10NConstants.SUCCESS)){						
-						//start counter 
-						startTimer();
-						UpdateChanges(defSharPref, orgSharPref, preference.getKey());						
-						showWpsDialog("PUSH BUTTON",null);
-						wpsAlertDialog.show();	
+						//start counter						
+						UpdateChanges(defSharPref, orgSharPref, preference.getKey());
+						new DialogThrd(L10NConstants.DIALOG_WPS_SESSION);
 					} else {
 						UpdateChanges(orgSharPref, defSharPref, preference.getKey());						
 					}
@@ -346,26 +369,21 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 					MainMenuSettings.preferenceChanged = true;	
 				} 
 				//if channel selected is 12,13 or 14 then set network_mode=b
-				defPrefEditor.putString(L10NConstants.CHNL_KEY,newValue.toString());
+				defPrefEditor.putString(L10NConstants.CHNL_KEY, newValue.toString());
 				defPrefEditor.commit();
 				if(newValue.equals("12") || newValue.equals("13") 
-						|| newValue.equals("14")){				     
-					defPrefEditor.putString(L10NConstants.HW_MODE_KEY,"b");
-					defPrefEditor.commit();					 
-					intent = new Intent(getApplicationContext(), BasicWirelessSettings.class);
-					startActivity(intent);
-					finish();
+						|| newValue.equals("14")){
+					onPreferenceChange(networkLst, "b");					
 				}
 				if(newValue.equals(L10NConstants.VAL_ZERO)) {
 					String autoChannel = defSharPref.getString("autoChannel", "");
-					if(!autoChannel.equals("")) {
+					if(!autoChannel.equals("")) 
 						freqLst.setSummary(lstEntry + "-Current Channel "+autoChannel);
-					} else { 
-						freqLst.setSummary(lstEntry);
-					}
-				} else {
+					else  
+						freqLst.setSummary(lstEntry);					
+				}else{ 
 					freqLst.setSummary(newValue.toString());
-				}	
+				}
 
 			}else if(preference == networkLst) {
 				String sDataRate = defSharPref.getString(L10NConstants.DATA_RATE_KEY, "");				
@@ -434,7 +452,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 					editPref.setSummary(newValue.toString());					
 					MainMenuSettings.preferenceChanged = true;										
 				} else {
-					Toast.makeText(this, "Value can not be Null", 1).show();
+					Toast.makeText(this, "Value cannot be null", 1).show();
 					prefChStatus = false;
 				}			
 			}
@@ -447,12 +465,19 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 			defPrefEditor.commit();
 			MainMenuSettings.preferenceChanged = true;
 		} else if(preference == configLst){			
-			if(!configLst.isChecked()){				
+			if(!configLst.isChecked()){
+				sSM = defSharPref.getString(L10NConstants.SEC_MODE_KEY, "");
+				if(sSM.equals(L10NConstants.VAL_ONE))
+				{
+					WPS_WARNING = getString(R.string.wpa_screen_alert_wep);
+					showAlertDialog(WPS_WARNING);
+					return false;
+				}	
 				new DialogThrd(L10NConstants.DIALOG_WPS);
 				defPrefEditor.putString(L10NConstants.WPS_KEY, L10NConstants.VAL_ONE);	
 				defPrefEditor.commit();
 				mainMenuStngs.saveChanges(defSharPref, orgSharPref, "BWS");
-				if(dialWPS!=null)dialWPS.cancel();
+				if(dialWPS!=null) dialWPS.cancel();				
 				if(MainMenuSettings.sWpsResponse != null){
 					if(MainMenuSettings.sWpsResponse.contains(L10NConstants.SUCCESS)){
 						if(MainMenuSettings.sCommitResponse.contains(L10NConstants.SUCCESS)){
@@ -467,10 +492,16 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 					configLst.setChecked(false);
 				}
 				MainMenuSettings.saveBtn.setEnabled(false);
-			}else {
+			}else {	
+				new DialogThrd(L10NConstants.DIALOG_WPS);
+				try{
 				response = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX + L10NConstants.WPS_KEY + "=0");					
 				Log.d(L10NConstants.TAG_BWS,"Response "+response);
 				response = mSoftAPCfg.SapSendCommand(L10NConstants.SET_CMD_PREFIX +"commit");
+				}catch(Exception e){
+					Log.d(L10NConstants.TAG_BWS, "Exception :"+e);
+				}
+
 				if(response.equals(L10NConstants.SUCCESS)){
 					defPrefEditor.putString(L10NConstants.WPS_KEY, L10NConstants.VAL_ZERO);	
 					orgPrefEditor.putString(L10NConstants.WPS_KEY, L10NConstants.VAL_ZERO);					
@@ -483,8 +514,9 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 				}
 				defPrefEditor.commit();
 				orgPrefEditor.commit();
-			}
-			MainMenuSettings.preferenceChanged = false;
+				if(dialWPS!=null) dialWPS.cancel();
+
+			}			
 		} 
 		return prefChStatus;
 	}
@@ -524,7 +556,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 	{
 		if(timr!=null)
 			timr.cancel();
-		timr=new timer(L10NConstants.MINUTE, 1000);
+		timr=new Timer(L10NConstants.MINUTE, 1000);
 		timr.start();
 	}
 
@@ -548,26 +580,45 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case L10NConstants.DIALOG_WPS: 			
-			dialWPS = new ProgressDialog(this);                
-			dialWPS.setMessage("Applying Changes to softAP...");			
-			dialWPS.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dialWPS.setIndeterminate(true);
-			dialWPS.setCancelable(true);			
-			return dialWPS;		
+			dialWPS = plaindialogCreater("Applying Changes to softAP...");                
+			return dialWPS;	
+		case L10NConstants.DIALOG_WPS_SESSION:
+			dialWPSsession=plaindialogCreater(L10NConstants.WPS_SESSION_MSG);
+			dialWPSsession.setTitle("WPS Session is On");
+			dialWPSsession.setButton(ProgressDialog.BUTTON_POSITIVE, "OK", this);		
+			return dialWPSsession;
+		case L10NConstants.DIALOG_WPS_PINENTRY:
+			dialWPSpinentry=plaindialogCreater(pinEntryMsg);
+			dialWPSpinentry.setTitle("WPS Session is On");
+			dialWPSpinentry.setButton(ProgressDialog.BUTTON_POSITIVE, "OK", this);
+			return dialWPSpinentry;
+
+
 		}
 		return null;
 	}
 
+	private ProgressDialog plaindialogCreater(String msg){
+		ProgressDialog tmp=new ProgressDialog(this);
+		tmp.setMessage(msg);
+		tmp.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		tmp.setIndeterminate(true);
+		tmp.setCancelable(true);
+		return tmp;
+	}
+
 	private void showAlertDialog(String AlertMessage){
-		new AlertDialog.Builder(this)				                
-		.setTitle(getString(R.string.str_dialog_warning))
-		.setMessage(AlertMessage)
-		.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
+		bwsbuilder=new AlertDialog.Builder(this);				                
+		bwsbuilder.setTitle(getString(R.string.str_dialog_warning));
+		bwsbuilder.setMessage(AlertMessage);
+		bwsalertdialog=bwsbuilder.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {			
 				//do nothing
 			}			
-		}).create().show();	
+		}).create();
+		bwsalertdialog.show();	
 	}
+
 	/**
 	 * 
 	 * Its a thread to launch progress bar dialog for wps.
@@ -589,16 +640,25 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 		 */
 		public void run() {
 			Looper.prepare();
+			looper = Looper.myLooper();
 			switch(dialogID) {
 			case L10NConstants.DIALOG_WPS: showDialog(L10NConstants.DIALOG_WPS);
+			break;
+			case L10NConstants.DIALOG_WPS_SESSION:showDialog(L10NConstants.DIALOG_WPS_SESSION);
+			startTimer();
+			break;
+			case L10NConstants.DIALOG_WPS_PINENTRY:showDialog(L10NConstants.DIALOG_WPS_PINENTRY);
+			startTimer();
 			break;
 			}
 			Looper.loop();
 		}
 	}
+
 	public void onResume() {
 		super.onResume();
 	}
+
 	/**
 	 * It restore the old values of wps_state ,when commit failure or wpa failure is received 
 	 * @return boolean
@@ -610,16 +670,17 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 		orgSharPref.edit().commit();		
 		return false;
 	}
+
 	/**
 	 * This class launches a two minute timer for wps.
 	 * 
 	 */
-	private class timer extends CountDownTimer {		
-		int counter = 0;
+	private class Timer extends CountDownTimer {		
+		int counter = 120;
 		/**
 		 * timer initializer
 		 */
-		public timer(long millisInFuture, long countDownInterval) {
+		public Timer(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
 		}		
 		/**
@@ -627,9 +688,11 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 		 */
 		@Override
 		public void onFinish() {
-			if(wpsDialog!=null) {
-				wpsAlertDialog.dismiss();	
-			}								
+			if(dialWPSsession!=null && dialWPSsession.isShowing()) {
+				dialWPSsession.cancel();	
+			} else if(dialWPSpinentry!=null && dialWPSpinentry.isShowing()){
+				dialWPSpinentry.cancel();
+			}
 			defPrefEditor.putString(L10NConstants.CONFIG_KEY, "");
 			defPrefEditor.commit();
 			intent = new Intent(getApplicationContext(), BasicWirelessSettings.class);
@@ -639,9 +702,14 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 
 		@Override
 		public void onTick(long millisUntilFinished) {
-			Log.d(L10NConstants.TAG_BWS,"Timer is running count:"+(++counter));
+			//Log.d(L10NConstants.TAG_BWS,"Timer is running count:"+(--counter));
+			if(dialWPSsession!=null && dialWPSsession.isShowing())
+				dialWPSsession.setMessage(L10NConstants.WPS_SESSION_MSG+" "+counter+" "+L10NConstants.SECONDS);
+			else if(dialWPSpinentry!=null && dialWPSpinentry.isShowing())
+				dialWPSpinentry.setMessage(pinEntryMsg+" "+counter+" "+L10NConstants.SECONDS);
 		}
 	}
+
 	/**
 	 * This method sets the updates given by the user,when failed the values is copied from original to copy file,
 	 * whereas when it get success,the values are copied from copy file to original
@@ -656,42 +724,44 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 		}
 		edit.commit();
 	}
-	/**
-	 * This Method shows the pop up when user clicks on enroll button list
-	 * 
-	 */
-	public void showWpsDialog(String Enroll,String pin) {
-		TextView view;
-		LayoutInflater factory = LayoutInflater.from(BasicWirelessSettings.this);
-		final View textEntryView = factory.inflate(R.layout.alert_message, null);						
-		view = (TextView) textEntryView.findViewById(R.id.message_view);
-		if(Enroll.equals("PIN ENTRY")) {
-			view.setText("Enter PIN number "+pin+" on the client to connect");	
-		} else {
-			view.setText("Press the Push button on the client to connect");	
-		}
-		wpsDialog=new AlertDialog.Builder(BasicWirelessSettings.this);				                
-		wpsDialog.setTitle("WPS Session is On");
-		wpsDialog.setView(textEntryView);
-
-		wpsAlertDialog = wpsDialog.setPositiveButton(getString(R.string.alert_dialog_rename_ok), 
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				//do nothing
-			}				
-		}).create();
-		wpsAlertDialog.show();
-	}
 
 	public void onDestroy() {
 		super.onDestroy();
-		if(wpsDialog!=null)	{
-			wpsAlertDialog.dismiss();	
+		MainMenuSettings.bwsEvent=null;		
+		if(dialWPSsession!=null && dialWPSsession.isShowing()){
+			dialWPSsession.cancel();
 		}
-		if(timr!=null) {
+		if(dialWPSpinentry!=null && dialWPSpinentry.isShowing()){
+			dialWPSpinentry.cancel();
+		}
+		if(bwsalertdialog!=null && bwsalertdialog.isShowing()){
+			bwsalertdialog.cancel();
+		}
+		if(timr != null) {
 			timr.cancel();
+		}
+		if(looper!=null){
+			looper.quit();
 		}
 		defPrefEditor.putString(L10NConstants.CONFIG_KEY, "");
 		defPrefEditor.commit();
 	}
+
+	public void EventHandler(String evt) {
+		if(evt.contains(L10NConstants.STATION_105)) {
+			finish();
+		} else if (evt.contains(L10NConstants.STATION_102) || 
+				evt.contains(L10NConstants.STATION_103)){
+			if(dialWPSsession!=null && dialWPSsession.isShowing())	{
+				dialWPSsession.cancel();	
+			} else if(dialWPSpinentry!=null && dialWPSpinentry.isShowing()){
+				dialWPSpinentry.cancel();
+			}
+		}
+		Log.d(L10NConstants.TAG_BWS,"destroying BasicWirelessSettings");
+	}
+
+	public void onClick(DialogInterface dialog, int which) {		
+		// do nothing
+	}	
 }

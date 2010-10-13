@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+  
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
-
+ 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -27,14 +27,13 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package com.qualcomm.wifi.softap.ns;
 
 import java.util.ArrayList;
-
 import java.util.List;
-import java.util.StringTokenizer;
+
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,7 +46,6 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,12 +58,16 @@ import android.widget.Toast;
 
 import com.qualcomm.wifi.softap.L10NConstants;
 import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
 
 /**
  * This MACFilterSettings class configures MAC Address List for addition/removal of MAC address
  */
 public class MACFilterSettings extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener, OnClickListener{
+	AlertDialog mfsalertdialog;
+	Builder mfsbuilder;
+	private QWiFiSoftApCfg qwifisoftAPCfg;
 	private Button add;
 	private EditText editMacAddr;
 	private LayoutInflater ltfactory;
@@ -78,7 +80,7 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 	private PreferenceScreen prefScr;
 	private SharedPreferences defSharPref;
 	private SharedPreferences.Editor defPrefEditor;
-	
+	private Preference pref;
 	public String allowkeys[];
 	public String denykeys[];
 	private String slstType, slstEntries;
@@ -99,6 +101,8 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		qwifisoftAPCfg=MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.mfsEvent=this;
 		addPreferencesFromResource(R.xml.mac_filter_settings);
 		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);
 		
@@ -113,7 +117,7 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 		prefScr = this.getPreferenceScreen();		
 		defPrefEditor = defSharPref.edit();
 
-		setMacAddrLstTitle();
+		setMacAddrLstTitle(slstType);
 		restoreUIState(defSharPref);
 		setContentView(R.layout.dynamic_add);
 		add = (Button) findViewById(R.id.btn);
@@ -137,14 +141,12 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 			if (index != -1) {
 				String lstValue = (String) macFilterMode.getEntries()[index];		
 				macFilterMode.setSummary(lstValue);		
-				slstType = (String) macFilterMode.getEntryValues()[index];
+				//slstType = newValue.toString();//(String) macFilterMode.getEntryValues()[index];
 				String macaddrCheck = defSharPref.getString("macaddr_acl", "");
 						
 				if(!macaddrCheck.equals(newValue)){
-					setMacAddrLstTitle();
-					intent = new Intent(getApplicationContext(), MACFilterSettings.class);					
-					startActivity(intent);
-					finish();
+					setMacAddrLstTitle(newValue.toString());
+					restoreUIState(defSharPref);				
 					MainMenuSettings.preferenceChanged = true;
 				}
 			}
@@ -155,9 +157,9 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 	/**
 	 * This method set the MAC address list title to AllowList/DenyList
 	 */
-	public void setMacAddrLstTitle()
+	public void setMacAddrLstTitle(String sLstType)
 	{
-		if(slstType.equals(L10NConstants.VAL_ZERO)) {			
+		if(sLstType.equals(L10NConstants.VAL_ZERO)) {			
 			slstEntries = "deny";
 			macAddrLst.setTitle("Deny List");
 			blstTypeAorD = false;		
@@ -178,9 +180,9 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 		final String sListAlert[] = {"Remove", "Cancel"};
 		for (Preference prefLst : macAddrList) {
 			if(prefLst == preference) {
-				new AlertDialog.Builder(MACFilterSettings.this)
-				.setTitle("Select")
-				.setItems(sListAlert, new DialogInterface.OnClickListener() {
+				mfsbuilder=new AlertDialog.Builder(MACFilterSettings.this);
+				mfsbuilder.setTitle("Select");
+				mfsalertdialog=mfsbuilder.setItems(sListAlert, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {						
 						String[] sCpyLstAlert = sListAlert;
 						if(sCpyLstAlert[which].equals("Remove")){							
@@ -194,7 +196,8 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 							//No action
 						}			
 					}
-				}).create().show();
+				}).create();
+				mfsalertdialog.show();
 			}
 		}
 		return true;		
@@ -246,15 +249,11 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 			Toast.makeText(MACFilterSettings.this, "Please Type a valid MAC Address", 1).show();				
 		}else{					
 			for (int n = 0; n < 15; n++){
-				String macallowValue = defSharPref.getString("allow"+(n+1), "");
-				String macdenyValue = defSharPref.getString("deny"+(n+1), "");
-				if(newValue.equalsIgnoreCase(macallowValue)){
-					Toast.makeText(this, "Address Already used in Accept/Deny List", 1).show();						
+				String macVal = defSharPref.getString(lstType+(n+1), "");				
+				if(newValue.equalsIgnoreCase(macVal)){
+					Toast.makeText(this, "Duplicate MAC address", 1).show();						
 					break;
-				}else if (newValue.equalsIgnoreCase(macdenyValue)){
-					Toast.makeText(this, "Address Already used in Accept/Deny List", 1).show();						
-					break;
-				}else if(n == 14){
+				} else if(n == 14){
 					for (int j = 1; j <= 15; j++) {						
 						String checkvalue = defSharPref.getString(lstType+j, "");						
 						if(checkvalue.equals("")) {
@@ -285,10 +284,14 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 	 * @param defSharPref SharedPreferences object to get the value from the default preference file
 	 */	
 	private void restoreUIState(SharedPreferences defSharPref) {
+		for(int i=0; i<macAddrList.size(); i++){
+			prefScr.removePreference(macAddrList.get(i));		
+		}
+		macAddrList.clear();
 		for (int j = 1; j <= 15; j++){
 			String checkvalue = defSharPref.getString(slstEntries+j, "");			
 			if(!checkvalue.equals("")){
-				Preference pref = new Preference(this);
+				pref = new Preference(this);
 				pref.setTitle(checkvalue);
 				pref.setKey(slstEntries+j);
 				pref.setOnPreferenceClickListener(this);		
@@ -317,76 +320,16 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 		editMacAddr = (EditText)textEntryView.findViewById(R.id.mac_edit_txt);
 		txtMacAddr = (TextView) textEntryView.findViewById(R.id.mac_txt_view);
 		txtMacAddr.setText("Eg: 11:22:33:44:55:AF");
-		editMacAddr.setHint("MAC Address");		
-
-		macAddrWatcher = new TextWatcher() {			
-			public void onTextChanged(CharSequence s, int start, int before, int ct) {				
-				String macAddr = s.toString();			
-
-				if(macAddr.contains(":")){
-					int index = macAddr.lastIndexOf(":");
-					StringTokenizer strToken = new StringTokenizer(macAddr, ":");
-					int count = 0;
-					char[] charArry = macAddr.toCharArray();
-					for(int i = 0; i < charArry.length; i++){
-						if(charArry[i] == ':'){
-							count++;
-						}
-					}
-					while(strToken.hasMoreTokens()){
-						String token = strToken.nextToken();												
-						if(!token.matches(L10NConstants.MAC_PATTERN1)  && before != 1)
-							editMacAddr.setError("Invalid");
-					}				
-					String part1 = macAddr.substring(index+1);					
-					if(!part1.equals("")){
-						if(part1.length() == 2 && part1.matches(L10NConstants.MAC_PATTERN1)){
-							if(count <= 4 && before != 1){
-								CharSequence newStr = macAddr+":";								
-								editMacAddr.setText(newStr);								
-								editMacAddr.setSelection(newStr.length());								
-							}							
-						}else if(!part1.matches(L10NConstants.MAC_PATTERN1) && before != 1)
-							editMacAddr.setError("Invalid");
-					}
-				}else{
-					if(macAddr.length() == 2 && before != 1){
-						if(macAddr.matches(L10NConstants.MAC_PATTERN1)){						
-							CharSequence newStr = macAddr+":";						
-							editMacAddr.setText(newStr);												
-							editMacAddr.setSelection(newStr.length());
-						}
-					}else if(!macAddr.matches(L10NConstants.MAC_PATTERN1))
-						editMacAddr.setError("Invalid");
-				}				
-				if(before == 1 && sTextB4Chd.charAt(start) == ':'){		
-					if(!sTextB4Chd.equals("")){
-						editMacAddr.setText(sTextB4Chd);
-						editMacAddr.setSelection(start+1);
-					}
-				}else if(before == 0 && macAddr.charAt(start) == ':'){
-					if(!sTextB4Chd.equals("")){
-						editMacAddr.setText(sTextB4Chd);
-						editMacAddr.setSelection(start);	
-					}
-				}								
-			}			
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				sTextB4Chd = s.toString();				
-			}			
-			public void afterTextChanged(Editable theWatchedText) {				
-			}
-		};		
-		editMacAddr.addTextChangedListener(macAddrWatcher);
-		//display the alert dialog box
+		editMacAddr.setHint("MAC Address");
+		
 		showAlertDialog();				
 	}
 	
 	public void showAlertDialog(){
-		new AlertDialog.Builder(MACFilterSettings.this)				                
-		.setTitle("Add MAC Address")
-		.setView(textEntryView)
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		mfsbuilder=new AlertDialog.Builder(MACFilterSettings.this);				                
+		mfsbuilder.setTitle("Add MAC Address");
+		mfsbuilder.setView(textEntryView);
+		mfsalertdialog=mfsbuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String newValue = editMacAddr.getText().toString();
 				if(blstTypeAorD)
@@ -397,6 +340,19 @@ public class MACFilterSettings extends PreferenceActivity implements OnPreferenc
 		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 			}
-		}).create().show();	
+		}).create();
+		mfsalertdialog.show();	
+	}
+
+	public void EventHandler(String evt) {		
+		if(evt.contains(L10NConstants.STATION_105)){			
+			finish();
+		}
+	}
+	public void onDestroy(){
+		super.onDestroy();
+		MainMenuSettings.mfsEvent = null;
+		if(mfsalertdialog != null && mfsalertdialog.isShowing()) mfsalertdialog.cancel();
+		Log.d(L10NConstants.TAG_MFS,"destroying MACFilterSettings");
 	}
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
+<resources>	
 	<array name = "wslist">
 		<item>Basic Wireless Settings</item>
 		<item>Wireless Security Settings</item>
@@ -182,7 +181,30 @@
 		<item>CCMP</item>
 		<item>TKIP CCMP</item>
 	</string-array>
+	
+<!-- ******status****** -->
+	<string-array name = "statuslist">
+	<item>AP Statistics</item>
+	<item>Associated Station List</item>
+	</string-array>
+	
+	<string-array name = "apStatisticsAbbrivations">
+	  <item>RUF=Receive Unicast</item> 
+      <item>RUB=Receive Unicast</item> 
+      <item>TUF=Transmit Unicast</item> 
+      <item>TUB=Transmit Unicast</item> 
+      <item>RMF=Receive Multicast</item> 
+      <item>RMB=Receive Multicast</item> 
+      <item>TMF=Transmit Multicast</item> 
+      <item>TMB=Transmit Multicast</item> 
+      <item>RBF=Receive Broadcast</item> 
+      <item>RBB=Receive Broadcast</item> 
+      <item>TBF=Transmit Broadcast</item> 
+      <item>TBB=Transmit Broadcast</item>
 
+	</string-array>
+	
+	
 	<!--  ***************** ASS ************ -->
 
 	<string-array name = "dataRatesArrayB">
@@ -292,6 +314,31 @@
 		<item>26</item>
 		<item>27</item>
 		<item>28</item>
+	</string-array>
+	
+	<string-array name = "ApShutdownTimerArray">
+		<item>Off</item>
+		<item>5 minutes</item>
+		<item>10 minutes</item>
+		<item>20 minutes</item>
+		<item>30 minutes</item>
+		<item>40 minutes</item>
+		<item>50 minutes</item>
+		<item>60 minutes</item>
+		<item>90 minutes</item>
+		<item>120 minutes</item>		
+	</string-array>
+	<string-array name = "ApShutdownTimerValues">
+		<item>0</item>
+		<item>5</item>
+		<item>10</item>
+		<item>20</item>
+		<item>30</item>
+		<item>40</item>
+		<item>50</item>
+		<item>60</item>
+		<item>90</item>
+		<item>120</item>
 	</string-array>
 
 	<string-array name = "countryCodeArray">
@@ -817,6 +864,8 @@
 
 	<string-array name = "station_lst_opt">
 		<item>Disassociate</item>
+		<item>Add to Allow List</item>
+		<item>Add to Deny List</item>
 		<item>Cancel</item>
 	</string-array>
 	
@@ -829,7 +878,9 @@
 		<item>rts_threshold</item>
 		<item>beacon_int</item>
 		<item>dtim_period</item>
-		<item>country_code</item>		
+		<item>country_code</item>
+		<item>auto_shut_off_time</item>
+		<item>energy_detect_threshold</item>
 	</string-array>
 	
 	<string-array name = "str_arr_aws_checkbx_keys">
@@ -856,6 +907,17 @@
 	</string-array>	
 		
 	<!--	***************** Default Profile values ************  -->
+
+	<string-array name = "internalKeys">
+		<item>status</item>
+		<item>broadcast_ssid</item>
+		<item>protect_flag</item>
+		<item>dhcp_check</item>
+		<item>configkey</item>
+		<item>wpsstate</item>
+		<item>config_methods</item>
+	</string-array>
+
 	<string-array name = "defaultProfileKeys">
 		<item>wps_state</item>
 		<item>hw_mode</item>
@@ -887,6 +949,8 @@
 		<item>macaddr_acl</item>
 		<item>allow_list</item>
 		<item>deny_list</item>
+		<item>auto_shut_off_time</item>
+		<item>energy_detect_threshold</item>
 	</string-array>
 
 	<string-array name = "mac_allow_keylst">

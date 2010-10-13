@@ -11,7 +11,8 @@
     
     <!--  ********** Sub Activities of Wireless Settings -->
     
-    <string name="act_name_ws_bws">Basic Wireless Settings</string>    
+    <string name="act_name_ws_bws">Basic Wireless Settings</string> 
+        <string name="wpa_screen_alert_wep">WPS not allowed if security mode is WEP</string> 
     	<string name="act_name_ws_bws_config_wps">Wi-Fi Protected Setup Configuration</string>
     
     <string name="act_name_ws_wss">Wirelss Security Settings</string>
@@ -80,7 +81,8 @@
 	<!--   ********** WSS_WEP.java ******* -->
 	 
   <string name="wep_summary">Must be 5/13/16 characters or 10/26/32 hex digits</string> 
-  
+  <string name="wep_screen_alert_wpa">WEP security mode is not allowed if WPS is enabled </string>
+																					 
   
   <!--   ********** Alert Messages ********   -->
   
@@ -102,6 +104,7 @@
 	<string name="str_bws_enroll">Select WPS Enroll Method</string>
 	<string name="str_dialog_warning">Warning</string>
 	<string name="str_prefcat_station">Associated Stations</string>
+	<string name="str_apstatistics">Access Point Statistics</string>
 	<string name="str_prefcat_aws">Advanced Wireless Settings</string>
 	
 	<!--   ********** ListPreference Titles ********   -->
@@ -113,6 +116,8 @@
 	
 	<string name="str_aws_pref_list_datart">Data Rate</string>
 	<string name="str_aws_pref_list_ctry">Country Code</string>	
+	<string name="str_aws_pref_list_apshuttimer">AP Shut Off Time</string>
+	
 	
 	<string name="str_wpapsk_pref_list_wpapair">WPA Encryption Algorithm</string>
 	<string name="str_wpapsk_pref_list_rsnpair">WPA2 Encryption Algorithm</string>
@@ -136,12 +141,14 @@
 	<string name="str_aws_pref_edit_rtstr">RTS Threshold</string>
 	<string name="str_aws_pref_edit_becon">Beacon Interval</string>
 	<string name="str_aws_pref_edit_dtim">DTIM Period</string>	
+	<string name="str_aws_pref_edit_energy">Energy Detect Threshold</string>
 	
 	<string name="str_aws_pref_edit_dlg_tpwr">Must be 2 to 30</string>
 	<string name="str_aws_pref_edit_dlg_fragtr">Must be 256 to 2346</string>
 	<string name="str_aws_pref_edit_dlg_rtstr">Must be 0 to 2347</string>
 	<string name="str_aws_pref_edit_dlg_becon">Must be 1 to 65535</string>
 	<string name="str_aws_pref_edit_dlg_dtim">Must be 1 to 255</string>
+	<string name="str_aws_pref_edit_dlg_energy">Must be 0 to 100</string>
 	
 	<string name="str_wep_pref_edit_key1">Key 1</string>
 	<string name="str_wep_pref_edit_key2">Key 2</string>
@@ -163,5 +170,7 @@
 	<string name="str_bws_pref_check_intrbss">Intra BSS Forwarding</string>
 	<string name="str_bws_pref_check_d">802.11d</string>	
 	<string name="str_main_pref_check_wifiap">Wi-Fi AP</string>
+	
+	
 	
 </resources>

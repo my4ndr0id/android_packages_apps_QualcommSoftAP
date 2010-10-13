@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -46,7 +46,8 @@ public class L10NConstants {
 	public static final String MAC_PATTERN = "((([0-9a-fA-F]){2}[:]){5}([0-9a-fA-F]){2})";
 	public static final String MAC_PATTERN1 = "^[0-9a-fA-F]{1,2}$";
 	public static final String HEXA_PATTERN = "[0-9a-fA-F]{10}|[0-9a-fA-F]{26}|[0-9a-fA-F]{32}";
-	public static final String PIN_PATTERN = "^[0-9]{8,32}$";	
+	//public static final String PIN_PATTERN = "^[0-9]{8,32}$";	
+	public static final String PIN_PATTERN = "^[0-9]{8}$";
 	
 	public static final String SET_CMD_PREFIX = "set ";
 	public static final String GET_CMD_PREFIX = "get ";
@@ -66,6 +67,7 @@ public class L10NConstants {
 	public static final String HW_MODE_KEY = "hw_mode";	
 	public static final String DATA_RATE_KEY = "data_rate";
 	public static final String COUNTRY_KEY = "country_code";
+	public static final String AP_SHUT_TIMER = "auto_shut_off_time";
 	public static final String SEC_MODE_KEY = "security_mode";	
 	public static final String RSN_PAIR_KEY = "rsn_pairwise";
 	public static final String WPA_PAIR_KEY = "wpa_pairwise";
@@ -82,11 +84,13 @@ public class L10NConstants {
 	
 	//	--- Dialog IDs ---
 		
-	public static final int DIALOG_WPS = 4;
+	public static final int DIALOG_WPS = 4,DIALOG_WPS_SESSION=5,DIALOG_WPS_PINENTRY=6;
 	public static final int DIALOG_OFF = 0, DIALOG_ON = 1, DIALOG_RESET = 2, 
 						DIALOG_SAVE = 3, DIALOG_INITIAL = 99;
 	
-	public static final int MINUTE = 2*60*1000;	
+	public static final int MINUTE = 2*60*1000;
+	public static final int SHUTDOWN_TIME = 5000;
+	public static final int APSTAT_TIME = 1000;
 	public static final int EVENT_ID = 1;	
 	public static final int MAX_LENGTH = 15;	
 	public static final String VAL_ZERO = "0";
@@ -96,6 +100,7 @@ public class L10NConstants {
 	public static final String VAL_FOUR = "4";	
 	public static final String STATION_102 = "102";
 	public static final String STATION_103 = "103";
+	public static final String STATION_105 = "105";
 	
 	//	--- Network Mode List Values ---
 	
@@ -115,7 +120,13 @@ public class L10NConstants {
 	public static final String SM_EXTRA_KEY = "SecurityMode";		
 	public static final String WPA_ALG_TKIP = "TKIP";
 
-	public static final String ERROR_NULL = "Can not be Null";
+	public static final String ERROR_NULL = "Value cannot be null";
 	public static final String ERROR_OUT_RANGE = "is out of range";
 	public static final String ERROR_BELOW_RANGE = "is below range";
+	
+	// ---Basic Wireless Settings
+	public static final String WPS_SESSION_MSG="Press the Push Button on the client to connect...";
+	
+	public static final String SECONDS = "seconds";
+	
 }

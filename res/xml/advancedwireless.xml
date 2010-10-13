@@ -66,6 +66,16 @@
 			android:key="country_code" 
 			android:entries="@array/countryCodeArray" 
 			android:entryValues="@array/countryCodeValues" 
-			android:dependency="d_chk"/>			
+			android:dependency="d_chk"/>
+		<ListPreference android:title="@string/str_aws_pref_list_apshuttimer"
+			android:key="auto_shut_off_time" 
+			android:entries="@array/ApShutdownTimerArray" 
+			android:entryValues="@array/ApShutdownTimerValues" />	
+		<EditTextPreference 
+			android:numeric="integer" 
+			android:title="@string/str_aws_pref_edit_energy"
+			android:key="energy_detect_threshold" 
+			android:dialogMessage="@string/str_aws_pref_edit_dlg_energy" 
+			android:maxLength="3"/>					
 	</PreferenceCategory>
 </PreferenceScreen>

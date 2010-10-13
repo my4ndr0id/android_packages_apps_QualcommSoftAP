@@ -26,7 +26,7 @@
 			android:dialogMessage="@string/str_bws_pref_edit_nwssid_dialog"
 			android:singleLine="true"
 			android:maxLength="32"
-			android:hint="Enter SSID/Network Name" />
+			android:hint="Enter SSID/Network Name"/>
 		<ListPreference 		
 			android:key="channel"		 
 			android:title="@string/str_bws_pref_list_chfreq" />

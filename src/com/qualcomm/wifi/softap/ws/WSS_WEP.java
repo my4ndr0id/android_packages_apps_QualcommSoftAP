@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
-
+ 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -41,6 +41,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -49,6 +50,7 @@ import android.widget.Toast;
 
 import com.qualcomm.wifi.softap.L10NConstants;
 import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
 /**
  * This class configures WEP encryption keys and transmit key.  
@@ -62,6 +64,7 @@ OnKeyListener, OnPreferenceClickListener {
 	private EditTextPreference wepEdit1, wepEdit2, wepEdit3, wepEdit4;	
 	private EditText keyET1, keyET2, keyET3, keyET4;
 	private ArrayList<EditTextPreference> editPrefLst;
+	private QWiFiSoftApCfg qwifisoftAPCfg;
 
 	/**
 	 * Method initializes the Activity from <i>wss_pref_wep</i> preference file
@@ -73,7 +76,8 @@ OnKeyListener, OnPreferenceClickListener {
 	public void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.wss_pref_wep);
-		
+		qwifisoftAPCfg=MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.wss_wepEvent=this;
 		//initialize array list to store the keys
 		editPrefLst = new ArrayList<EditTextPreference>();
 
@@ -130,7 +134,7 @@ OnKeyListener, OnPreferenceClickListener {
 		if((keyCode >= 7 && keyCode <= 16) || (keyCode >= 29 && keyCode <= 54) || keyCode == 59 || keyCode == 67){
 			String textVal = ((EditText)v).getText().toString();
 			if(textVal.equals("")){
-				((EditText)v).setError("Key can not be null");
+				((EditText)v).setError("Key cannot be null");
 			}					
 		}else if((keyCode >= 20 && keyCode <= 22)){
 			((EditText)v).setError(null);
@@ -199,7 +203,16 @@ OnKeyListener, OnPreferenceClickListener {
 				return false;				
 			} 
 		} else 
-			Toast.makeText(this, "Key can not be null", 1).show();	
+			Toast.makeText(this, "Key cannot be null", 1).show();	
 		return false;
-	}	
+	}
+	public void EventHandler(String evt) {		
+		if(evt.contains(L10NConstants.STATION_105)) 
+			finish();
+	}
+	public void onDestroy(){
+		super.onDestroy();
+		MainMenuSettings.wss_wepEvent = null;
+		Log.d("WSS_WEP","destroying WSS_WEP");
+	}
 }

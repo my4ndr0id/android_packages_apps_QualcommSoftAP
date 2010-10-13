@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+      notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided
+ *    disclaimer in the documentation and/or other materials provided  
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
-
+ 
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -33,6 +33,7 @@ package com.qualcomm.wifi.softap.ws;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -52,14 +54,17 @@ import android.widget.Toast;
 
 import com.qualcomm.wifi.softap.L10NConstants;
 import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
 
 /**
  * This class gives the configuration settings for WPA-PSK, WPA2_PSK and WPA_WPA2 Mixed Security Mode 
  */
 public class WSS_WPAPSK extends PreferenceActivity implements OnPreferenceChangeListener, 
-OnKeyListener, OnPreferenceClickListener {   
-
+OnKeyListener, OnPreferenceClickListener{   
+	private AlertDialog wss_wpapskalertdialog;
+	private Builder wss_wpapskbuilder;
+	private QWiFiSoftApCfg qwifisoftAPCfg;
 	private static String WPA_ALERT;	
 	private String SecurityMode;
 	private String[] keys;
@@ -82,7 +87,8 @@ OnKeyListener, OnPreferenceClickListener {
 	public void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.wss_pref_wpapsk);
-		
+		qwifisoftAPCfg=MainMenuSettings.mSoftAPCfg;
+		MainMenuSettings.wss_wpapskEvent=this;
 
 		// Initialize array list to include the preferences
 		prefLst = new ArrayList<Preference>();
@@ -259,13 +265,27 @@ OnKeyListener, OnPreferenceClickListener {
 	 * Shows up alert dialog box for displaying warning message
 	 */
 	private void showAlertDialog(){
-		new AlertDialog.Builder(this)				                
-		.setTitle(getString(R.string.str_dialog_warning))
-		.setMessage(WPA_ALERT)
-		.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
+		wss_wpapskbuilder=new AlertDialog.Builder(this);				                
+		wss_wpapskbuilder.setTitle(getString(R.string.str_dialog_warning));
+		wss_wpapskbuilder.setMessage(WPA_ALERT);
+		wss_wpapskalertdialog=wss_wpapskbuilder.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {			
 				// No Action
 			}			
-		}).create().show();	
+		}).create();
+		wss_wpapskalertdialog.show();	
+	}
+
+	public void EventHandler(String evt) {		
+		if(evt.contains(L10NConstants.STATION_105)) 
+			finish();
+	}
+	public void onDestroy(){
+		super.onDestroy();
+		MainMenuSettings.wss_wpapskEvent = null;
+		if(wss_wpapskalertdialog != null && wss_wpapskalertdialog.isShowing()){
+			wss_wpapskalertdialog.cancel();
+		}
+		Log.d(L10NConstants.TAG_WSS_WPAPSK, "destroying wss_wpapsk");
 	}
 }
