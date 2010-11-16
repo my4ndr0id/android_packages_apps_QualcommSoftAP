@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- 
+
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -8,7 +8,7 @@
       notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided  
+ *    disclaimer in the documentation and/or other materials provided
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -32,15 +32,12 @@ package com.qualcomm.wifi.softap;
 
 import android.util.Log;
 
-
 /**
  * This interface declares EventHandler method to handle events. 
  */
-interface QWiFiSoftApEvent
-{
+interface QWiFiSoftApEvent {
 	public void EventHandler(String evt);
 }
-
 
 /**
  * This class declares all the native methods used in softAP and also loads the library
@@ -59,11 +56,11 @@ public class QWiFiSoftApCfg {
 		System.loadLibrary("QWiFiSoftApCfg");		
 		mEventCallback = (QWiFiSoftApEvent)caller;							
 	}
-	
+
 	/**
 	 * This method creates a APEventMonitor thread if it is not created previously otherwise previous APEventMonitor thread is utilized 
 	 */
-	public void SapStartEventMonitor(){
+	public void SapStartEventMonitor() {
 		if(APEventMonitor.KILLED){
 
 			APEventMonitor.KILLED=false;
@@ -75,7 +72,7 @@ public class QWiFiSoftApCfg {
 			APEventMonitor.RETURNED=false;
 		}
 	}
-	public void SapStopEventMonitor(){
+	public void SapStopEventMonitor() {
 		APEventMonitor.KILLED=true;
 	}
 }
@@ -86,20 +83,20 @@ public class QWiFiSoftApCfg {
  * an incoming events via native method calls and broadcasts it.
  *
  */
-class APEventMonitor implements Runnable
-{
+class APEventMonitor implements Runnable {
+	private static final String TAG = "APEventMonitor";
 	private String eventstr;
 	private QWiFiSoftApCfg qcsoftapcfg;
 	private QWiFiSoftApEvent eventHandler;
-	
+
 	private Thread thread;
 	static boolean KILLED = true,RETURNED=true;
-	
+
 	/**
 	 *  Its an initialization part of APEventMonitor class.
 	 *  It also starts the APEventMonitor thread.     
 	 */
-	public APEventMonitor(QWiFiSoftApCfg ref,QWiFiSoftApEvent eventHandler){
+	public APEventMonitor(QWiFiSoftApCfg ref,QWiFiSoftApEvent eventHandler) {
 		qcsoftapcfg=ref;		
 		this.eventHandler=eventHandler;
 		thread = new Thread(this);
@@ -110,31 +107,28 @@ class APEventMonitor implements Runnable
 	 * broadcasts it.
 	 */
 	public void run() {
-		Log.d("APEventMonitor","Thread Started");
-		if(qcsoftapcfg.SapOpenNetlink()){
-			Log.d("APEventMonitor", "Connection success");			
-				while(!KILLED)
-				{					
-					Log.e("APEventMonitor","Waiting For Broadcast");
-					eventstr=qcsoftapcfg.SapWaitForEvent();
-					if(KILLED) break;
-					if (eventstr == null) {
-						Log.e("APEventMonitor","Null Event Received");						
-						continue;
-					}			
-					eventHandler.EventHandler(eventstr);
-					Log.e("APEventMonitor","Event Received, broadcasting it");
-					
-				}
-				Log.e("APEventMonitor","Killing Thread");
-				qcsoftapcfg.SapCloseNetlink();		
-				
-		} else {
-			Log.d("APEventMonitor","Connection Failed");
-		}
-	Log.d("APEventMonitor","Returning from APEventMonitor");
-	RETURNED=true;
-	}
-	
-}
+		Log.d("APEventMonitor", "Thread Started");
+		if(qcsoftapcfg.SapOpenNetlink()) {
+			Log.d(TAG, "Connection success");
+			
+			while(!KILLED) {					
+				Log.e(TAG, "Waiting For Broadcast");
+				eventstr=qcsoftapcfg.SapWaitForEvent();
+				if(KILLED) break;
+				if (eventstr == null) {
+					Log.e(TAG, "Null Event Received");						
+					continue;
+				}			
+				eventHandler.EventHandler(eventstr);
+				Log.e(TAG, "Event Received, broadcasting it");
+			}
+			Log.e(TAG, "Killing Thread");
+			qcsoftapcfg.SapCloseNetlink();		
 
+		} else {
+			Log.d(TAG, "Connection Failed");
+		}
+		Log.d(TAG, "Returning from APEventMonitor");
+		RETURNED=true;
+	}
+}

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- 
+
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -8,12 +8,12 @@
       notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided  
+ *    disclaimer in the documentation and/or other materials provided
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
- 
+
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -26,6 +26,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 
 package com.qualcomm.wifi.softap.ws;
 
@@ -43,36 +44,36 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.qualcomm.wifi.softap.L10NConstants;
-import com.qualcomm.wifi.softap.MainMenuSettings;
-import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
+import com.qualcomm.wifi.softap.MainMenu;
 import com.qualcomm.wifi.softap.R;
 
 /**
  * This class is used to configure the AdvancedWireless settings for WifiSoft
  */
-public class AdvancedWireless extends PreferenceActivity implements
-OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
-	private QWiFiSoftApCfg qwifisoftAPCfg;
-	private String[] keys, checkBoxKeys;
-	private String[] br_opt, br_optValues;
-	private String[] freqArrayValues;
+public class AdvancedWirelessSettings extends PreferenceActivity implements
+OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{	
+	private String[] sKeys, sCheckBoxKeys;
+	private String[] sBr_opt, sBr_optValues;
+	private String[] sFreqValues;
 	private String sNWMode;
 	private String sRegulatoryDomain;
 
 	private SharedPreferences defSharPref;
 	private SharedPreferences.Editor defPrefEditor;
 
-	private CheckBoxPreference protectChk, wmmChk, intrabssChk, chkbx;
-	private EditTextPreference fragmentETP, rtsETP, beaconETP, dtimETP,
-	transmitPwr,energyDetect;
-	private EditText rtsEdit, beaconEdit, dtimEdit, fragmentEdit, txpowerEdit, energyEdit;
-	private ListPreference dataRatesLst, countryCodeLst, apShutdownLst;
+	private CheckBoxPreference protectChk, intrabssChk, chkbx;	
+	private EditTextPreference fragmentETP, rtsETP, beaconETP, dtimETP, transmitPwr;
+	private EditText rtsEdit, beaconEdit, dtimEdit, fragmentEdit, txpowerEdit;
+	private ListPreference dataRatesLst, countryCodeLst, apShutdownLst, wmmLst;
+	public static  ListPreference energyDetect;
 
 	private ArrayList<Preference> prefLst = new ArrayList<Preference>();
 	private ArrayList<CheckBoxPreference> checkPrefLst = new ArrayList<CheckBoxPreference>();
@@ -88,18 +89,17 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		qwifisoftAPCfg=MainMenuSettings.mSoftAPCfg;
-		MainMenuSettings.awEvent=this;
-		addPreferencesFromResource(R.xml.advancedwireless);
+		super.onCreate(savedInstanceState);		
+		MainMenu.advancedWirelessEvent = this;
+		addPreferencesFromResource(R.xml.advanced_wireless_settings);
 
 		// get the keys for trasmit power/data rate/frag threshold/rts
 		// threshold/beacon interval/dtim period
-		keys = getResources().getStringArray(R.array.str_arr_aws_keys);
+		sKeys = getResources().getStringArray(R.array.str_arr_aws_keys);
 
 		// get the keys for checkbox preference ie protection flag/wmm/intra
 		// bss/802.11d
-		checkBoxKeys = getResources().getStringArray(
+		sCheckBoxKeys = getResources().getStringArray(
 				R.array.str_arr_aws_checkbx_keys);
 
 		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -109,22 +109,22 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 		sNWMode = defSharPref.getString(L10NConstants.HW_MODE_KEY, "");
 
 		// get the reference to protection flag/wmm/intra bss/802.11d
-		protectChk = (CheckBoxPreference) findPreference("protect_flag");
-		wmmChk = (CheckBoxPreference) findPreference("wmm_key");
+		protectChk = (CheckBoxPreference) findPreference("protect_flag");		
 		intrabssChk = (CheckBoxPreference) findPreference("intra_bss");
-		chkbx = (CheckBoxPreference) findPreference("d_chk");
+		chkbx = (CheckBoxPreference) findPreference("d_chk");		
 
 		// get the reference to transmit power/data rate/frag threshold/rts
 		// threshold/beacon interval/dtim period
 		dataRatesLst = (ListPreference) findPreference("data_rate");
 		countryCodeLst = (ListPreference) findPreference("country_code");
-		transmitPwr = (EditTextPreference) findPreference("tx_power");
-		energyDetect = (EditTextPreference) findPreference("energy_detect_threshold");
+		energyDetect = (ListPreference) findPreference("energy_detect_threshold");
+		apShutdownLst = (ListPreference) findPreference("auto_shut_off_time");	
+		transmitPwr = (EditTextPreference) findPreference("tx_power");		
 		fragmentETP = (EditTextPreference) findPreference("fragm_threshold");
 		rtsETP = (EditTextPreference) findPreference("rts_threshold");
+		wmmLst = (ListPreference) findPreference("wmm_enabled");
 		beaconETP = (EditTextPreference) findPreference("beacon_int");
-		dtimETP = (EditTextPreference) findPreference("dtim_period");
-		apShutdownLst = (ListPreference) findPreference("auto_shut_off_time");		
+		dtimETP = (EditTextPreference) findPreference("dtim_period");			
 
 		// Preferences are added to ArrayList in order
 		prefLst.add(transmitPwr);
@@ -136,21 +136,21 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 		prefLst.add(countryCodeLst);
 		prefLst.add(apShutdownLst);
 		prefLst.add(energyDetect);
+		prefLst.add(wmmLst);
 
-		checkPrefLst.add(protectChk);
-		checkPrefLst.add(wmmChk);
+		checkPrefLst.add(protectChk);		
 		checkPrefLst.add(intrabssChk);
 		checkPrefLst.add(chkbx);
 
-		for (int j = 0; j < checkBoxKeys.length; j++) {
-			String checkBoxVal = defSharPref.getString(checkBoxKeys[j], "");
+		for (int j = 0; j < sCheckBoxKeys.length; j++) {
+			String sCheckBoxVal = defSharPref.getString(sCheckBoxKeys[j], "");
 			checkPrefLst.get(j).setOnPreferenceChangeListener(this);
 			// set default values for checkbox's returned initially from the
 			// preference file
-			if (!checkBoxVal.equals("")) {
-				if (checkBoxVal.equals(L10NConstants.VAL_ZERO)) {
+			if (!sCheckBoxVal.equals("")) {
+				if (sCheckBoxVal.equals(L10NConstants.VAL_ZERO)) {
 					checkPrefLst.get(j).setChecked(false);
-				} else if (checkBoxVal.equals(L10NConstants.VAL_ONE))
+				} else if (sCheckBoxVal.equals(L10NConstants.VAL_ONE))
 					checkPrefLst.get(j).setChecked(true);
 			} else
 				checkPrefLst.get(j).setChecked(false);
@@ -180,15 +180,14 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 		rtsEdit = rtsETP.getEditText();
 		beaconEdit = beaconETP.getEditText();
 		dtimEdit = dtimETP.getEditText();
-		energyEdit = energyDetect.getEditText();
 
 		txpowerEdit.setOnKeyListener(this);
 		rtsEdit.setOnKeyListener(this);
 		beaconEdit.setOnKeyListener(this);
 		dtimEdit.setOnKeyListener(this);
-		fragmentEdit.setOnKeyListener(this);
-		energyEdit.setOnKeyListener(this);
-	}
+		fragmentEdit.setOnKeyListener(this);		
+		energyDetect.setOnPreferenceClickListener(this);
+	}	
 
 	/**
 	 * Set data rate entry/values based on the value of network mode
@@ -199,10 +198,10 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 *            values associated with network mode
 	 */
 	private void setDataRateEntry(int dataratesarrayb, int dataratesvaluesb) {
-		br_opt = getResources().getStringArray(dataratesarrayb);
-		dataRatesLst.setEntries(br_opt);
-		br_optValues = getResources().getStringArray(dataratesvaluesb);
-		dataRatesLst.setEntryValues(br_optValues);
+		sBr_opt = getResources().getStringArray(dataratesarrayb);
+		dataRatesLst.setEntries(sBr_opt);
+		sBr_optValues = getResources().getStringArray(dataratesvaluesb);
+		dataRatesLst.setEntryValues(sBr_optValues);
 	}
 
 	/**
@@ -217,6 +216,10 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 		if (preference instanceof EditTextPreference) {
 			((EditTextPreference) preference).getEditText().setError(null);
 		}
+		if (preference.equals(energyDetect)) {
+			energyDetect.getDialog().setTitle("Energy Detect Threshold");
+		}
+		
 		return true;
 	}
 
@@ -234,21 +237,19 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 *         otherwise.
 	 */
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		String textVal = ((EditText) v).getText().toString();
-		if (!textVal.equals("")) {
+		String sTextVal = ((EditText) v).getText().toString();
+		if (!sTextVal.equals("")) {
 			if (v == txpowerEdit) {
-				validateEditPrefRange((EditText) v, textVal, 30, 2);
+				validateEditPrefRange((EditText) v, sTextVal, 30, 2);
 			} else if (v == beaconEdit) {
-				validateEditPrefRange((EditText) v, textVal, 65535, 1);
+				validateEditPrefRange((EditText) v, sTextVal, 65535, 1);
 			} else if (v == dtimEdit) {
-				validateEditPrefRange((EditText) v, textVal, 255, 1);
+				validateEditPrefRange((EditText) v, sTextVal, 255, 1);
 			} else if (v == fragmentEdit) {
-				validateEditPrefRange((EditText) v, textVal, 2346, 256);
-			} else if (v == energyEdit) {
-				validateEditPrefRange((EditText) v, textVal, 100, 0);
-			}else if (v == rtsEdit) {
-				if (Integer.parseInt(textVal) > 2347)
-					((EditText) v).setError(textVal + " "
+				validateEditPrefRange((EditText) v, sTextVal, 2346, 256);
+			} else if (v == rtsEdit) {
+				if (Integer.parseInt(sTextVal) > 2347)
+					((EditText) v).setError(sTextVal + " "
 							+ L10NConstants.ERROR_OUT_RANGE);
 			}
 		} else
@@ -266,12 +267,12 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 * @param maxRange is maximum range for the entry
 	 * @param minRange is minimum range for the entry *
 	 */
-	private void validateEditPrefRange(EditText editText, String textVal,
+	private void validateEditPrefRange(EditText editText, String sTextVal,
 			int maxRange, int minRange) {
-		if (Integer.parseInt(textVal) > maxRange) {
-			editText.setError(textVal + " " + L10NConstants.ERROR_OUT_RANGE);
-		} else if (Integer.parseInt(textVal) < minRange) {
-			editText.setError(textVal + " " + L10NConstants.ERROR_BELOW_RANGE);
+		if (Integer.parseInt(sTextVal) > maxRange) {
+			editText.setError(sTextVal + " " + L10NConstants.ERROR_OUT_RANGE);
+		} else if (Integer.parseInt(sTextVal) < minRange) {
+			editText.setError(sTextVal + " " + L10NConstants.ERROR_BELOW_RANGE);
 		}
 	}
 
@@ -285,25 +286,29 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 */
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		int m;
+		String sLstEntry = "";
 		if (preference instanceof ListPreference) {
 			// get the list value from default preference file for
 			// data_rate/country_code
-			String dateRateCheck = defSharPref.getString(
+			String sDateRateCheck = defSharPref.getString(
 					L10NConstants.DATA_RATE_KEY, "");
-			String countryCodeCheck = defSharPref.getString(
+			String sCountryCodeCheck = defSharPref.getString(
 					L10NConstants.COUNTRY_KEY, "");
-			String apShutTimerCheck = defSharPref.getString(
+			String sApShutTimerCheck = defSharPref.getString(
 					L10NConstants.AP_SHUT_TIMER, "");
-
+			String sEnergyModeCheck = defSharPref.getString(
+					L10NConstants.ENERGY_DETECT_THRESHOLD, "");
+			String sWmmCheck = defSharPref.getString(
+					L10NConstants.WMM_LST_KEY, "");
 			if (preference == dataRatesLst) {
-				if (!dateRateCheck.equals(newValue)) {
-					MainMenuSettings.preferenceChanged = true;
+				if (!sDateRateCheck.equals(newValue)) {
+					MainMenu.bPreferenceChanged = true;
 				}
 			}
 			int index = ((ListPreference) preference).findIndexOfValue(newValue
 					.toString());
 			if (index != -1) {
-				String lstEntry = (String) ((ListPreference) preference)
+				sLstEntry = (String) ((ListPreference) preference)
 				.getEntries()[index];				
 
 				// update the default preference file by extracting country code
@@ -311,31 +316,31 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 				// else update data rate value
 				if (newValue.toString().contains(",")) {
 					int indexValue = newValue.toString().indexOf(",");
-					String Value = newValue.toString().substring(0, indexValue);
-					defPrefEditor.putString(L10NConstants.COUNTRY_KEY, Value);
+					String sValue = newValue.toString().substring(0, indexValue);
+					defPrefEditor.putString(L10NConstants.COUNTRY_KEY, sValue);
 					defPrefEditor.putString("Regulatory_domain", newValue
 							.toString().substring(indexValue + 1,
 									newValue.toString().length()));
 					defPrefEditor.commit();
-					((ListPreference) preference).setSummary(lstEntry);
+					((ListPreference) preference).setSummary(sLstEntry);
 				} else
-					((ListPreference) preference).setSummary(lstEntry);
+					((ListPreference) preference).setSummary(sLstEntry);
 			}
 
 			// Doesnt allow save settings button to be enabled when you click
 			// same country code which is selected before
 			if (preference == countryCodeLst) {
-				if (!countryCodeCheck.equals(newValue)) {
-					MainMenuSettings.preferenceChanged = true;
+				if (!sCountryCodeCheck.equals(newValue)) {
+					MainMenu.bPreferenceChanged = true;
 				}
-				String countryCode = newValue.toString();
+				String sCountryCode = newValue.toString();
 				String sChannel = defSharPref.getString(L10NConstants.CHNL_KEY, "");
 
 				// extract country code and regulatory domain from key value
 				// selected
-				if (countryCode.contains(",")) {
-					sRegulatoryDomain = countryCode.substring(countryCode
-							.indexOf(",") + 1, countryCode.length());
+				if (sCountryCode.contains(",")) {
+					sRegulatoryDomain = sCountryCode.substring(sCountryCode
+							.indexOf(",") + 1, sCountryCode.length());
 				}
 
 				if (sRegulatoryDomain.equals("REGDOMAIN_FCC")
@@ -352,26 +357,43 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 				}
 			}			
 			if (preference == apShutdownLst) {
-				if (!apShutTimerCheck.equals(newValue)) {
-					MainMenuSettings.preferenceChanged = true;
+				if (!sApShutTimerCheck.equals(newValue)) {
+					MainMenu.bPreferenceChanged = true;
 				}						
-			}			
+			}		
+			if (preference == energyDetect) {	
+				if(newValue.equals("128")){
+					((ListPreference) preference).setSummary("Disabled");					
+				} else {
+					((ListPreference) preference).setSummary("Enabled (Threshold: "+sLstEntry+")");
+				}
+				if (!sEnergyModeCheck.equals(newValue)) {					
+					MainMenu.bPreferenceChanged = true;
+				}					
+			}
+			if(preference == wmmLst) {
+				if(!newValue.equals("0")) {
+					((ListPreference) preference).setSummary(sLstEntry+"d");
+				}
+				if(!sWmmCheck.equals(newValue)) {
+					MainMenu.bPreferenceChanged = true;
+				}
+			}
+
 		} else if (preference instanceof EditTextPreference) {
 			EditTextPreference etPref = (EditTextPreference) preference;
-			String value = etPref.getEditText().getEditableText().toString();
-			if (!value.equals("")) {
+			String sValue = etPref.getEditText().getEditableText().toString();
+			if (!sValue.equals("")) {
 				if (etPref == transmitPwr) {
-					return validateEditPrefOnChange(etPref, value, 30, 2);
+					return validateEditPrefOnChange(etPref, sValue, 30, 2);
 				} else if (etPref == fragmentETP) {
-					return validateEditPrefOnChange(etPref, value, 2346, 256);
+					return validateEditPrefOnChange(etPref, sValue, 2346, 256);
 				} else if (etPref == rtsETP) {
-					return validateEditPrefOnChange(etPref, value, 2347, 0);
+					return validateEditPrefOnChange(etPref, sValue, 2347, 0);
 				} else if (etPref == beaconETP) {
-					return validateEditPrefOnChange(etPref, value, 65535, 1);
-				} else if (etPref == energyDetect) {
-					return validateEditPrefOnChange(etPref, value, 100, 0);
-				}else if (etPref == dtimETP)
-					return validateEditPrefOnChange(etPref, value, 255, 1);
+					return validateEditPrefOnChange(etPref, sValue, 65535, 1);
+				} else if (etPref == dtimETP)
+					return validateEditPrefOnChange(etPref, sValue, 255, 1);
 			} else {
 				Toast.makeText(this, L10NConstants.ERROR_NULL, 1).show();
 				return false;
@@ -380,17 +402,17 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 			for (m = 0; m < checkPrefLst.size(); m++) {
 				if (checkPrefLst.get(m) == (CheckBoxPreference) preference) {
 					if (!((CheckBoxPreference) preference).isChecked()) {
-						defPrefEditor.putString(checkBoxKeys[m],
+						defPrefEditor.putString(sCheckBoxKeys[m],
 								L10NConstants.VAL_ONE);
 					} else {
-						defPrefEditor.putString(checkBoxKeys[m],
+						defPrefEditor.putString(sCheckBoxKeys[m],
 								L10NConstants.VAL_ZERO);
 					}
 					defPrefEditor.commit();
-					MainMenuSettings.preferenceChanged = true;
+					MainMenu.bPreferenceChanged = true;
 					break;
 				}
-			}
+			}	
 		}
 		return true;
 	}
@@ -406,9 +428,9 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 * @return Dialog Returns the Dialog box based on the ID
 	 */
 	private boolean validateEditPrefOnChange(EditTextPreference editPref,
-			String value, int maxRange, int minRange) {
-		MainMenuSettings.preferenceChanged = true;
-		int i = Integer.parseInt(value);
+			String sValue, int maxRange, int minRange) {
+		MainMenu.bPreferenceChanged = true;
+		int i = Integer.parseInt(sValue);
 		if (i >= minRange && i <= maxRange) {
 			editPref.setSummary(Integer.toString(i));
 		} else {
@@ -429,8 +451,8 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 */
 	public void checkChannelAvailability(int channelAvailability,
 			String sChannel) {
-		freqArrayValues = getResources().getStringArray(channelAvailability);
-		if (!isAvailable(freqArrayValues, sChannel)) {
+		sFreqValues = getResources().getStringArray(channelAvailability);
+		if (!isAvailable(sFreqValues, sChannel)) {
 			defPrefEditor.putString(L10NConstants.CHNL_KEY,
 					L10NConstants.VAL_ZERO);
 			defPrefEditor.commit();
@@ -446,10 +468,10 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 *            channel value from the preference file to be verified
 	 * @return
 	 */
-	public boolean isAvailable(String[] dr, String sChannel) {
+	public boolean isAvailable(String[] sDr, String sChannel) {
 		boolean available = false;
-		for (int i = 0; i < dr.length; i++) {
-			if (sChannel.equals(dr[i])) {
+		for (int i = 0; i < sDr.length; i++) {
+			if (sChannel.equals(sDr[i])) {
 				available = true;
 				break;
 			}
@@ -464,8 +486,8 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 	 * @return void
 	 */
 	public void setDefaultValues() {
-		for (int i = 0; i < keys.length; i++) {
-			String getConfigMode = defSharPref.getString(keys[i], "");
+		for (int i = 0; i < sKeys.length; i++) {
+			String sGetConfigMode = defSharPref.getString(sKeys[i], "");
 			Preference pref = prefLst.get(i);
 			pref.setOnPreferenceChangeListener(this);
 			pref.setOnPreferenceClickListener(this);
@@ -476,20 +498,34 @@ OnPreferenceChangeListener, OnKeyListener, OnPreferenceClickListener{
 					((ListPreference) pref).setSummary(countryCodeLst.getEntry());
 				} else if (pref == apShutdownLst){
 					((ListPreference) pref).setSummary(apShutdownLst.getEntry());
-				}else
-					((ListPreference) pref).setSummary(getConfigMode);
+				} else if (pref == wmmLst){
+					if(!sGetConfigMode.equals("0")) {
+						((ListPreference) pref).setSummary(wmmLst.getEntry()+"d");
+					} else {						
+						((ListPreference) pref).setSummary(wmmLst.getEntry());
+					}					
+				} else if (pref == energyDetect){
+					if(defSharPref.getString(L10NConstants.ENERGY_DETECT_THRESHOLD,L10NConstants.VAL_SEVEN)
+							.equals(L10NConstants.VAL_ONEHUNDREDTWENTYEIGHT)){
+						((ListPreference) pref).setSummary("Disabled");
+					} else { 
+					((ListPreference) pref).setSummary("Enabled (Threshold: "+energyDetect.getEntry()+")");
+					}
+				} else
+					((ListPreference) pref).setSummary(sGetConfigMode);
 			} else
-				pref.setSummary(getConfigMode);
+				pref.setSummary(sGetConfigMode);
 		}
 	}
 
-	public void EventHandler(String evt) {		
-		if(evt.contains(L10NConstants.STATION_105)) 
+	public void EventHandler(String sEvt) {		
+		if(sEvt.contains(L10NConstants.STATION_105)) 
 			finish();
 	}
+
 	public void onDestroy(){
 		super.onDestroy();
-		MainMenuSettings.awEvent = null;
+		MainMenu.advancedWirelessEvent = null;
 		Log.d(L10NConstants.TAG_AWS,"destroying Advanced wireless");
 	}
 }

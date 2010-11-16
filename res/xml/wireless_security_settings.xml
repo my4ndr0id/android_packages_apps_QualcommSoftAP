@@ -5,9 +5,9 @@
 		android:key="wss_catag">	
 	<ListPreference
     	android:title="@string/str_wss_pref_list_sm"                       
-        android:key="security_mode"
-        android:defaultValue="Open"                        
+        android:key="security_mode"                               
         android:entries="@array/securityMode"
-        android:entryValues="@array/securityModeValues" />	
+        android:entryValues="@array/securityModeValues"
+        android:defaultValue="Open"/>	
 	</PreferenceCategory>
 </PreferenceScreen>

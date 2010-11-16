@@ -8,7 +8,7 @@
 	<array name = "nwslist">
 		<item>MAC Filter Settings</item>
 	</array>
-
+	<!-- Basic Wireless Settings - Network Mode List -->
 	<string-array name = "networkArray">
 		<item>B</item>
 		<item>G</item>
@@ -22,8 +22,8 @@
 		<item>n_only</item>
 		<item>g</item>
 		<item>n</item>
-	</string-array>
-
+	</string-array>	
+	<!-- Basic Wireless Settings - Channel Frequency -->
 	<string-array name = "freqeleven">
 		<item>Auto</item>
 		<item>1 (2.412 GHz)</item>
@@ -120,7 +120,7 @@
 		<item>13</item>
 		<item>14 </item>
 	</string-array>
-
+	<!-- Basic Wireless Settings - Authentication Mode -->
 	<string-array name = "authArray">
 		<item>Auto</item>
 		<item>Open</item>
@@ -131,7 +131,7 @@
 		<item>1</item>
 		<item>2</item>
 	</string-array>
-
+	<!-- Basic Wireless Settings - WPS Enroll List -->
 	<string-array name = "wpsEnrollArray">
 		<item>PIN Entry</item>
 		<item>Push Button Control</item>
@@ -140,9 +140,7 @@
 		<item>1</item>
 		<item>0</item>
 	</string-array>
-
-	<!--  ***************** WSS ************ -->
-
+	<!-- Wireless Security Settings - Security Mode -->
 	<string-array name = "securityMode">
 		<item>Open</item>
 		<item>WEP</item>
@@ -157,7 +155,7 @@
 		<item>3</item>
 		<item>4</item>
 	</string-array>
-
+	<!-- Wireless Security Settings - Transmit Key -->
 	<string-array name = "transmitKey">
 		<item>1</item>
 		<item>2</item>
@@ -170,7 +168,7 @@
 		<item>2</item>
 		<item>3</item>
 	</string-array>
-
+	<!-- Wireless Security Settings - WPAPSK Algorithm -->
 	<string-array name = "wpapskAlgorithm">
 		<item>TKIP</item>
 		<item>CCMP</item>
@@ -180,14 +178,12 @@
 		<item>TKIP</item>
 		<item>CCMP</item>
 		<item>TKIP CCMP</item>
-	</string-array>
-	
-<!-- ******status****** -->
+	</string-array>	
+	<!-- Station Status - Status Items -->
 	<string-array name = "statuslist">
-	<item>AP Statistics</item>
-	<item>Associated Station List</item>
-	</string-array>
-	
+		<item>AP Statistics</item>
+		<item>Associated Station List</item>
+	</string-array>	
 	<string-array name = "apStatisticsAbbrivations">
 	  <item>RUF=Receive Unicast</item> 
       <item>RUB=Receive Unicast</item> 
@@ -201,12 +197,8 @@
       <item>RBB=Receive Broadcast</item> 
       <item>TBF=Transmit Broadcast</item> 
       <item>TBB=Transmit Broadcast</item>
-
-	</string-array>
-	
-	
-	<!--  ***************** ASS ************ -->
-
+	</string-array>		
+	<!-- Advanced Wireless Settings - Data Rates -->
 	<string-array name = "dataRatesArrayB">
 		<item>Auto</item>
 		<item>1</item>
@@ -316,6 +308,19 @@
 		<item>28</item>
 	</string-array>
 	
+	<!-- Advanced Wireless Settings - WMM List Items -->	
+	<string-array name = "wmmArray">
+		<item>Auto</item>
+		<item>Enable</item>
+		<item>Disable</item>
+	</string-array>
+	<string-array name="wmmValues">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>	
+	
+	<!-- Advanced Wireless Settings - AP Shutdown Time -->
 	<string-array name = "ApShutdownTimerArray">
 		<item>Off</item>
 		<item>5 minutes</item>
@@ -340,7 +345,7 @@
 		<item>90</item>
 		<item>120</item>
 	</string-array>
-
+	<!-- Advanced Wireless Settings - Country Code -->
 	<string-array name = "countryCodeArray">
 		<item>USA</item>
 		<item>Andorra</item>
@@ -841,9 +846,35 @@
 		<item>K3,REGDOMAIN_KOREA</item>
 		<item>K4,REGDOMAIN_KOREA</item>
 	</string-array>
-
-	<!--  ***************** Network Settings ************ -->
-
+	<!-- Advanced Wireless Settings - Energy Threshold -->
+	<string-array name = "energyDetectThreshold">
+		<item>Off</item>
+		<item>-60 dBm</item>
+		<item>-63 dBm</item>
+		<item>-66 dBm</item>
+		<item>-69 dBm</item>
+		<item>-72 dBm</item>
+		<item>-75 dBm</item>
+		<item>-78 dBm</item>
+		<item>-81 dBm</item>
+		<item>-84 dBm</item>
+		<item>-87 dBm</item>
+	</string-array>
+	<string-array name = "energyDetectThresholdValues">
+		<item>128</item>
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+	</string-array>
+	
+	<!-- Network Settings - MAC Filter Mode-->
 	<string-array name = "nwConfigArray">
 		<item>Accept unless in deny list</item>
 		<item>Deny unless in accept list</item>
@@ -852,25 +883,20 @@
 		<item>0</item>
 		<item>1</item>
 	</string-array>
-
-	<!--  ***************** Basic Wireless Settings Keys ************ -->
-
+	<!-- Basic Wireless Settings List Preference Keys -->
 	<string-array name = "bws_keys">
 		<item>hw_mode</item>
 		<item>ssid</item>
 		<item>channel</item>
 		<item>auth_algs</item>
 	</string-array>	
-
 	<string-array name = "station_lst_opt">
 		<item>Disassociate</item>
 		<item>Add to Allow List</item>
 		<item>Add to Deny List</item>
 		<item>Cancel</item>
-	</string-array>
-	
-	<!--  *****************Advanced Wireless Settings Keys ************ -->
-	
+	</string-array>	
+	<!-- Advanced Wireless Settings Keys -->	
 	<string-array name = "str_arr_aws_keys">
 		<item>tx_power</item>
 		<item>data_rate</item>
@@ -881,43 +907,27 @@
 		<item>country_code</item>
 		<item>auto_shut_off_time</item>
 		<item>energy_detect_threshold</item>
-	</string-array>
-	
-	<string-array name = "str_arr_aws_checkbx_keys">
-		<item>protection_flag</item>
 		<item>wmm_enabled</item>
+	</string-array>	
+	<string-array name = "str_arr_aws_checkbx_keys">
+		<item>protection_flag</item>		
 		<item>intra_bss_forward</item>
 		<item>regulatory_domain</item>
 	</string-array>
-
-	<!--  *************** WSS_WEP Keys ************ -->
-
+	<!-- Wireless Security Settings WEP Keys -->
 	<string-array name = "str_arr_wep_keys">		
 		<item>wep_key0</item>
 		<item>wep_key1</item>
 		<item>wep_key2</item>
 		<item>wep_key3</item>
-	</string-array>
-	
+	</string-array>	
 	<string-array name = "str_arr_wpapsk_keys">		
 		<item>wpa_pairwise</item>		
 		<item>rsn_pairwise</item>
 		<item>wpa_passphrase</item>
 		<item>wpa_group_rekey</item>
-	</string-array>	
-		
-	<!--	***************** Default Profile values ************  -->
-
-	<string-array name = "internalKeys">
-		<item>status</item>
-		<item>broadcast_ssid</item>
-		<item>protect_flag</item>
-		<item>dhcp_check</item>
-		<item>configkey</item>
-		<item>wpsstate</item>
-		<item>config_methods</item>
-	</string-array>
-
+	</string-array>			
+	<!-- Commands Key List	-->
 	<string-array name = "defaultProfileKeys">
 		<item>wps_state</item>
 		<item>hw_mode</item>
@@ -950,7 +960,7 @@
 		<item>allow_list</item>
 		<item>deny_list</item>
 		<item>auto_shut_off_time</item>
-		<item>energy_detect_threshold</item>
+		<item>energy_detect_threshold</item>		
 	</string-array>
 
 	<string-array name = "mac_allow_keylst">
@@ -986,7 +996,5 @@
 		<item>deny13</item>
 		<item>deny14</item>
 		<item>deny15</item>
-
 	</string-array>
-
 </resources>

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- 
+
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -8,7 +8,7 @@
       notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided  
+ *    disclaimer in the documentation and/or other materials provided
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -31,10 +31,8 @@
 package com.qualcomm.wifi.softap.ss;
 
 import android.app.Activity;
-
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -43,8 +41,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.qualcomm.wifi.softap.L10NConstants;
-import com.qualcomm.wifi.softap.MainMenuSettings;
-import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
+import com.qualcomm.wifi.softap.MainMenu;
 import com.qualcomm.wifi.softap.R;
 
 /**
@@ -52,9 +49,8 @@ import com.qualcomm.wifi.softap.R;
  * for every association/disassociation of station
  */
 public class StationStatus extends Activity {	
-	private QWiFiSoftApCfg mSoftAPCfg;
 	private ListView statusLst;
-	private String[] statusvalue;
+	private String[] sStatusvalue;
 	Intent i;
 	/**
 	 * This method inflates the UI view from <i>ws.xml</i><br> and provides selection to the user
@@ -65,14 +61,13 @@ public class StationStatus extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		MainMenuSettings.ssEvent = this;
-		mSoftAPCfg = MainMenuSettings.mSoftAPCfg;
-		setContentView(R.layout.statuslist1);
+		MainMenu.stationEvent = this;		
+		setContentView(R.layout.station_status_layout);
 
-		statusvalue = getResources().getStringArray(R.array.statuslist);
+		sStatusvalue = getResources().getStringArray(R.array.statuslist);
 		statusLst = (ListView) findViewById(R.id.status);
 		statusLst.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, statusvalue));
+				android.R.layout.simple_list_item_1, sStatusvalue));
 		
 		// User is provided with selection options to click
 		statusLst.setOnItemClickListener(new OnItemClickListener() {
@@ -85,22 +80,23 @@ public class StationStatus extends Activity {
 				} else if (statusLst.getItemAtPosition(position).equals(
 						"Associated Station List")) {
 					Log.d(L10NConstants.TAG_WS, "onItemClick - AssociatedStation");
-					i = new Intent(StationStatus.this, AssociatedStation.class);
+					i = new Intent(StationStatus.this, AssociatedStationsList.class);
 				} 
 				startActivity(i);
 			}
 		});
 	}
 	
-	public void EventHandler(String evt) {		
-		if(evt.contains(L10NConstants.STATION_105)) 
+	public void EventHandler(String sEvt) {		
+		if(sEvt.contains(L10NConstants.STATION_105)){
+			setResult(RESULT_CANCELED);
 			finish();
+		}
 	}
 	
 	public void onDestroy(){
 		super.onDestroy();
-		MainMenuSettings.ssEvent = null;
+		MainMenu.stationEvent = null;
 		Log.d("StationStatus","destroying StationStatus");
 	}
-	
 }

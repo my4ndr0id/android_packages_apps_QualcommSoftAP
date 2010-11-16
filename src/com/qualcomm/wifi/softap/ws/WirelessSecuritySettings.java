@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- 
+
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -8,19 +8,19 @@
       notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided  
+ *    disclaimer in the documentation and/or other materials provided
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
- 
+
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
  * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
  * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
@@ -44,7 +44,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 
 import com.qualcomm.wifi.softap.L10NConstants;
-import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.MainMenu;
 import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
 
@@ -52,14 +52,14 @@ import com.qualcomm.wifi.softap.R;
 /**
  * This class displays the options to select the security mode for the wireless security<br>
  * 
- * {@link com.qualcomm.wifi.softap.ws.WSS_WEP}
- * {@link com.qualcomm.wifi.softap.ws.WSS_WPAPSK}
+ * {@link com.qualcomm.wifi.softap.ws.WEPSettings}
+ * {@link com.qualcomm.wifi.softap.ws.WPASettings}
  */
 public class WirelessSecuritySettings extends PreferenceActivity implements OnPreferenceChangeListener{	
 	private AlertDialog wssalertdialog;
 	private Builder wssbuilder;
-	private String SM_NM_CHECK = "";
-	private String WPA_CHECK="";
+	private String sSmNmCheck = "";
+	private String sWpaCheck="";
 	private QWiFiSoftApCfg qwifisoftAPCfg;
 	private Intent intent;
 	private SharedPreferences defSharPref, orgSharPref;
@@ -76,9 +76,9 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		qwifisoftAPCfg = MainMenuSettings.mSoftAPCfg;
-		MainMenuSettings.wssEvent=this;
-		addPreferencesFromResource(R.xml.wss_pref);
+		qwifisoftAPCfg = MainMenu.mSoftAPCfg;
+		MainMenu.wirelessSecurityEvent = this;
+		addPreferencesFromResource(R.xml.wireless_security_settings);
 		defSharPref = PreferenceManager.getDefaultSharedPreferences(this);		 
 		orgSharPref = getSharedPreferences(L10NConstants.CONFIG_FILE_NAME, MODE_PRIVATE);
 		//Get the reference to the security mode key
@@ -89,8 +89,8 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 
 	/**
 	 * Redirect to the below activities <br>
-	 * {@link WSS_WEP Security Mode - WEP}<br>
-	 * {@link WSS_WPAPSK Security Mode - WPAPSK} based on the new changed preference value
+	 * {@link WEPSettings Security Mode - WEP}<br>
+	 * {@link WPASettings Security Mode - WPAPSK} based on the new changed preference value
 	 * 
 	 * @param preference The changed Preference.
 	 * @param newValue The new value of the Preference.
@@ -101,7 +101,7 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 		int index = securityModeLst.findIndexOfValue(newValue.toString());
 		
 		//Get Security mode key value from original file ie orgSharPref
-		String securityCheck = orgSharPref.getString(L10NConstants.SEC_MODE_KEY, ""); 
+		String sSecurityCheck = orgSharPref.getString(L10NConstants.SEC_MODE_KEY, ""); 
 		
 		//Get string values for network_mode, rsn_pair and wpa_pair from default preference
 		String sNM = defSharPref.getString(L10NConstants.HW_MODE_KEY, "");
@@ -110,65 +110,65 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 		String sWps = defSharPref.getString(L10NConstants.WPS_KEY, "");
 		
 		if (index != -1) {
-			String lstEntry = (String) securityModeLst.getEntries()[index];
+			String sLstEntry = (String) securityModeLst.getEntries()[index];
 			//Show warning alert message which doesn't allow to set security mode=WEP for network mode=n/bgn
-			if(lstEntry.equals(L10NConstants.WEP)) {			
-				intent = new Intent(getBaseContext(), WSS_WEP.class);	
+			if(sLstEntry.equals(L10NConstants.WEP)) {			
+				intent = new Intent(getBaseContext(), WEPSettings.class);	
 				if(sNM.equals(L10NConstants.SM_N_ONLY)) {
-					SM_NM_CHECK = getString(R.string.wep_screen_alert_N) + " " +
+					sSmNmCheck = getString(R.string.wep_screen_alert_N) + " " +
 					getString(R.string.common_append_alert_wep);
 				}else if(sNM.equals(L10NConstants.SM_N)) {
-					SM_NM_CHECK = getString(R.string.wep_screen_alert_BGN) +" " +
+					sSmNmCheck = getString(R.string.wep_screen_alert_BGN) +" " +
 					getString(R.string.common_append_alert_wep);
 				}
 				if(sNM.equals(L10NConstants.SM_N_ONLY) || sNM.equals(L10NConstants.SM_N)) {						
-					showAlertDialog(lstEntry,SM_NM_CHECK);
+					showAlertDialog(sLstEntry,sSmNmCheck);
 					return false;
 				} else if(sWps.equals(L10NConstants.VAL_ONE)){
-					WPA_CHECK = getString(R.string.wep_screen_alert_wpa);
-					showAlertDialog(lstEntry,WPA_CHECK);
+					sWpaCheck = getString(R.string.wep_screen_alert_wpa);
+					showAlertDialog(sLstEntry,sWpaCheck);
 					return false;
 				} else{
-					securityModeLst.setSummary(lstEntry);
+					securityModeLst.setSummary(sLstEntry);
 					startActivity(intent);
 				}
 			//Show warning alert message for the scenario Security mode=WPA-PSK/WPA-2PSK/MIXED & network mode=n/bgn			
-			} else if(!lstEntry.equals(L10NConstants.OPEN)) {
-				securityModeLst.setSummary(lstEntry);	
-				intent = new Intent(getBaseContext(), WSS_WPAPSK.class);
-				intent.putExtra(L10NConstants.SM_EXTRA_KEY, lstEntry);
+			} else if(!sLstEntry.equals(L10NConstants.OPEN)) {
+				securityModeLst.setSummary(sLstEntry);	
+				intent = new Intent(getBaseContext(), WPASettings.class);
+				intent.putExtra(L10NConstants.SM_EXTRA_KEY, sLstEntry);
 				
 				if(sNM.equals(L10NConstants.SM_N_ONLY)) {
-					SM_NM_CHECK = getString(R.string.wpa_screen_alert_N_TKIP) + " " +
+					sSmNmCheck = getString(R.string.wpa_screen_alert_N_TKIP) + " " +
 					getString(R.string.common_append_alert_wpa);
 				}else if(sNM.equals(L10NConstants.SM_N)){
-					SM_NM_CHECK = getString(R.string.wpa_screen_alert_BGN_TKIP) + " " +
+					sSmNmCheck = getString(R.string.wpa_screen_alert_BGN_TKIP) + " " +
 					getString(R.string.common_append_alert_wpa);
 				}				
 				if(sNM.equals(L10NConstants.SM_N_ONLY) || sNM.equals(L10NConstants.SM_N)){
 					if(newValue.equals(L10NConstants.VAL_TWO)){
 						if(sWpa.equals(L10NConstants.WPA_ALG_TKIP))
-							showAlertDialog(lstEntry,SM_NM_CHECK);
+							showAlertDialog(sLstEntry,sSmNmCheck);
 						else
 							startActivity(intent);
 					}else if(newValue.equals(L10NConstants.VAL_THREE)){
 						if(sRsn.equals(L10NConstants.WPA_ALG_TKIP))
-							showAlertDialog(lstEntry,SM_NM_CHECK);
+							showAlertDialog(sLstEntry,sSmNmCheck);
 						 else
 							startActivity(intent);
 					} else{
 						if(sWpa.equals(L10NConstants.WPA_ALG_TKIP) || sRsn.equals(L10NConstants.WPA_ALG_TKIP))
-							showAlertDialog(lstEntry,SM_NM_CHECK);
+							showAlertDialog(sLstEntry,sSmNmCheck);
 						else
 							startActivity(intent);
 					}							
 				} else 
 					startActivity(intent);																
 			}else
-				securityModeLst.setSummary(lstEntry);
+				securityModeLst.setSummary(sLstEntry);
 		}	
-		if(!securityCheck.equals(newValue)){
-			MainMenuSettings.preferenceChanged = true;	
+		if(!sSecurityCheck.equals(newValue)){
+			MainMenu.bPreferenceChanged = true;	
 		}			
 		return true;
 	}
@@ -177,13 +177,13 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 	 * Show alert dialog box displaying the warning message 
 	 * @param lstEntry is the type of security mode selected
 	 */
-	private void showAlertDialog(final String lstEntry, String message){
+	private void showAlertDialog(final String sLstEntry, String sMessage){
 		wssbuilder=new AlertDialog.Builder(this); 
 		wssbuilder.setTitle(getString(R.string.str_dialog_warning));
-		wssbuilder.setMessage(message);
+		wssbuilder.setMessage(sMessage);
 		wssalertdialog=wssbuilder.setPositiveButton(getString(R.string.alert_dialog_rename_ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				if(!lstEntry.equals(L10NConstants.WEP)) {
+				if(!sLstEntry.equals(L10NConstants.WEP)) {
 					startActivity(intent);
 				}				
 			}			
@@ -191,13 +191,13 @@ public class WirelessSecuritySettings extends PreferenceActivity implements OnPr
 		wssalertdialog.show();	
 	}
 
-	public void EventHandler(String evt) {			
-		if(evt.contains(L10NConstants.STATION_105)) 
+	public void EventHandler(String sEvt) {			
+		if(sEvt.contains(L10NConstants.STATION_105)) 
 			finish();
 	}
 	public void onDestroy(){
 		super.onDestroy();
-		MainMenuSettings.wssEvent = null;
+		MainMenu.wirelessSecurityEvent = null;
 		if(wssalertdialog != null && wssalertdialog.isShowing()){
 			wssalertdialog.cancel();
 		}

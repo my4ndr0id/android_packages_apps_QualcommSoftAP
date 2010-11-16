@@ -23,6 +23,5 @@
 			android:key="wpa_group_rekey"
 			android:dialogMessage="@string/str_wep_pref_edit_grp_dlg" 
 			android:singleLine="true"/>
-	</PreferenceCategory>
-	
+	</PreferenceCategory>	
 </PreferenceScreen>

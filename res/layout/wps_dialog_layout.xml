@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView 
-        android:id="@+id/mac_txt_view"
+        android:id="@+id/txt_view"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginLeft="20dip"
@@ -13,9 +13,9 @@
         android:capitalize="none"
         android:textAppearance="?android:attr/textAppearanceMedium" 
         android:enabled="false"
-        android:focusable="false"/>         
+        android:focusable="false" />         
     <EditText
-        android:id="@+id/mac_edit_txt"
+        android:id="@+id/editText"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_marginLeft="20dip"
@@ -23,5 +23,6 @@
         android:gravity="fill_horizontal"
         android:singleLine="true"
         android:focusable="true"
-        android:maxLength="17"/>        
+        android:maxLength="8"
+        android:numeric="integer"/>
 </LinearLayout>

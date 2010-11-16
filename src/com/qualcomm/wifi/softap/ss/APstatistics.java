@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- 
+
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
@@ -8,7 +8,7 @@
       notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
- *    disclaimer in the documentation and/or other materials provided  
+ *    disclaimer in the documentation and/or other materials provided
  *    with the distribution.
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
@@ -33,7 +33,7 @@ package com.qualcomm.wifi.softap.ss;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import com.qualcomm.wifi.softap.L10NConstants;
-import com.qualcomm.wifi.softap.MainMenuSettings;
+import com.qualcomm.wifi.softap.MainMenu;
 import com.qualcomm.wifi.softap.QWiFiSoftApCfg;
 import com.qualcomm.wifi.softap.R;
 
@@ -48,10 +48,10 @@ import android.util.Log;
 public class APstatistics extends PreferenceActivity{	
 	private PreferenceScreen prefScr;
 	private Preference pref;
-	private String KeyVal;
-	private StringTokenizer strToken;	
-	private timer timr;
-	public static String TAG, response;
+	private String sKeyVal;
+	private StringTokenizer sToken;	
+	private timer timer;
+	public static String sTag;
 	private QWiFiSoftApCfg mSoftAPCfg;
 	private ArrayList<String> apStatArrange;
 	/**
@@ -64,11 +64,11 @@ public class APstatistics extends PreferenceActivity{
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		MainMenuSettings.apsEvent=this;
-		addPreferencesFromResource(R.xml.apstatistics);
+		MainMenu.apStatisticsEvent = this;
+		addPreferencesFromResource(R.xml.ap_statistics);
 		prefScr = getPreferenceScreen();
-		mSoftAPCfg = MainMenuSettings.mSoftAPCfg;
-		TAG = getString(R.string.tag) + "SS";
+		mSoftAPCfg = MainMenu.mSoftAPCfg;
+		sTag = getString(R.string.tag) + "SS";
 		apStatArrange = new ArrayList<String>();
 
 		getAPStatisticsList();
@@ -81,57 +81,56 @@ public class APstatistics extends PreferenceActivity{
 	 * @param macLst
 	 *            MAC Address List from underlined daemon
 	 */
-	private void updateStationLst(String macLst) {
-		String Packets = "";		
-		String Bytes = "";	
-		String apStaticValue;	
+	private void updateStationLst(String sMacLst) {
+		String sPackets = "";		
+		String sBytes = "";	
+		String sApStaticValue;	
 		prefScr.removeAll();	
 
-		strToken = new StringTokenizer(macLst);
-		String[] apStatisticsAbbr = getResources().getStringArray(
+		sToken = new StringTokenizer(sMacLst);
+		String[] sApStatisticsAbbr = getResources().getStringArray(
 				R.array.apStatisticsAbbrivations);
-		while (strToken.hasMoreTokens()) {
-			apStatArrange.add(strToken.nextToken());				
+		while (sToken.hasMoreTokens()) {
+			apStatArrange.add(sToken.nextToken());				
 		}	
 
-		for(int i = 0;i<apStatisticsAbbr.length; i++){
-			String apStatTitle = apStatisticsAbbr[i].substring(apStatisticsAbbr[i].indexOf("=") + 1, apStatisticsAbbr[i]
+		for(int i = 0;i<sApStatisticsAbbr.length; i++){
+			
+			String sApStatTitle = sApStatisticsAbbr[i].substring(sApStatisticsAbbr[i].indexOf("=") + 1, sApStatisticsAbbr[i]
 			                                                                                                          .length());
-
+			
 			for(int j = 0; j<apStatArrange.size(); j++){
 				String sApStat= apStatArrange.get(j).substring(0, apStatArrange.get(j).indexOf("="));				
-				apStaticValue = apStatArrange.get(j).substring(apStatArrange.get(j).indexOf("=") + 1, apStatArrange.get(j)
+				sApStaticValue = apStatArrange.get(j).substring(apStatArrange.get(j).indexOf("=") + 1, apStatArrange.get(j)
 						.length());
-				if(apStatisticsAbbr[i].contains(sApStat)){
-					if(sApStat.contains("F")){					
-						Packets = apStaticValue;						
+				if(sApStatisticsAbbr[i].contains(sApStat)){
+					if((sApStat.contains("RUF")) || (sApStat.contains("TUF"))){					
+						sPackets = sApStaticValue;						
 						apStatArrange.remove(j);
 						break;
-					} else {					
-						Bytes = apStaticValue;							
+					} else if((sApStat.contains("RUB")) || (sApStat.contains("TUB"))){					
+						sBytes = sApStaticValue;							
 						apStatArrange.remove(j);
 						break;
 					}
-
 				}
 			}
-			if(!Packets.equals("") && !Bytes.equals("")){				
+			if(!sPackets.equals("") && !sBytes.equals("")){				
 				pref = new Preference(this);
-				pref.setTitle(apStatTitle);
-				pref.setSummary("Packets="+Packets+"  Bytes="+Bytes);
+				pref.setTitle(sApStatTitle);
+				pref.setSummary("Packets="+sPackets+"  Bytes="+sBytes);
 				prefScr.addPreference(pref);				
-				Packets = "";
-				Bytes = "";
-
+				sPackets = "";
+				sBytes = "";
 			}
 		}
 	}
 
 	public void startTimer() {
-		if (timr != null)
-			timr.cancel();
-		timr = new timer(L10NConstants.APSTAT_TIME, 1000);
-		timr.start();
+		if (timer != null)
+			timer.cancel();
+		timer = new timer(L10NConstants.APSTAT_TIME, 1000);
+		timer.start();
 	}
 
 	private class timer extends CountDownTimer {
@@ -153,35 +152,40 @@ public class APstatistics extends PreferenceActivity{
 	}
 
 	public void getAPStatisticsList() {
-		Log.d(TAG, "Getting Command " + L10NConstants.GET_CMD_PREFIX
+		Log.d(sTag, "Getting Command " + L10NConstants.GET_CMD_PREFIX
 				+ "apstat");
 		try{
-			KeyVal = mSoftAPCfg.SapSendCommand(L10NConstants.GET_CMD_PREFIX
+			sKeyVal = mSoftAPCfg.SapSendCommand(L10NConstants.GET_CMD_PREFIX
 					+ "apstat");
 		}catch(Exception e){
-			Log.d(TAG, "Exception :"+e);
-		}
-		Log.d(TAG, "Received response " + KeyVal);		
+			Log.d(sTag, "Exception :"+e);
+		}		
+		Log.d(sTag, "Received response " + sKeyVal);		
 		// Pulls only mac_addresses from success result sent by daemon
-		if (!KeyVal.equals("")) {
-			if (KeyVal.contains("success")) {
-				int index = KeyVal.indexOf("=");
-				updateStationLst(KeyVal.substring(index + 1));
+		if (!sKeyVal.equals("")) {
+			if (sKeyVal.contains("success")) {
+				try{
+					int index = sKeyVal.indexOf("=");
+					updateStationLst(sKeyVal.substring(index + 1));
+				}
+				catch (Exception e){					
+					Log.e(sTag,"Exceptioon " + e);
+				}
 			}
 		}
 	}
 
 	public void onDestroy(){
 		super.onDestroy();
-		if (timr != null) {
-			timr.cancel();
+		if (timer != null) {
+			timer.cancel();
 		}
-		MainMenuSettings.apsEvent = null;
+		MainMenu.apStatisticsEvent = null;
 		Log.d("APStatistics","destroying APstatistics");
 	}
 
-	public void EventHandler(String evt) {		
-		if(evt.contains(L10NConstants.STATION_105)) 
+	public void EventHandler(String sEvt) {		
+		if(sEvt.contains(L10NConstants.STATION_105)) 
 			finish();
 	}
 }
