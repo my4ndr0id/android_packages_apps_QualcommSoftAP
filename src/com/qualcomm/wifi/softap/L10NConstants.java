@@ -130,6 +130,7 @@ public class L10NConstants {
 	public static final String WPA_MIXED = "WPA-WPA2 Mixed";
 	public static final String SM_EXTRA_KEY = "SecurityMode";		
 	public static final String WPA_ALG_TKIP = "TKIP";
+	public static final String WPA_ALG_MIXED = "TKIP CCMP";
 
 	public static final String ERROR_NULL = "Value cannot be null";
 	public static final String ERROR_OUT_RANGE = "is out of range";

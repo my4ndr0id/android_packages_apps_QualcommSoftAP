@@ -35,13 +35,13 @@
 	<!-- Alert Dialog Messages -->
 	<string name="wep_screen_alert_N">WEP Security Mode is not allowed with N Operating Mode.</string>
 	<string name="wep_screen_alert_BGN">WEP Security Mode is not allowed with BGN Operating Mode.</string>
-	<string name="bws_screen_alert_N_TKIP">N Operating Mode is not allowed with TKIP Encryption.</string>
-	<string name="bws_screen_alert_BGN_TKIP">BGN Operating Mode is not allowed with TKIP Encryption.</string>
+	<string name="bws_screen_alert_N_TKIPorMIXED">N Operating Mode is not allowed with TKIP or MIXED Encryption.</string>
+	<string name="bws_screen_alert_BGN_TKIPorMIXED">BGN Operating Mode is not allowed with TKIP or MIXED Encryption.</string>
 	<string name="bws_screen_alert_N_WEP">N Operating Mode is not allowed with WEP Security Mode.</string>
 	<string name="bws_screen_alert_BGN_WEP">BGN Operating Mode is not allowed with WEP Security Mode.</string>
-	<string name="wpa_screen_alert_N_TKIP">TKIP Encryption is not allowed with N Operating Mode.</string>
-	<string name="wpa_screen_alert_BGN_TKIP">TKIP Encryption is not allowed with BGN Operating Mode.</string>
-	<string name="mms_screen_alert">TKIP Encryption is not allowed with N or BGN Operating Mode.</string>
+	<string name="wpa_screen_alert_N_TKIPorMIXED">TKIP or MIXED Encryption is not allowed with N Operating Mode.</string>
+	<string name="wpa_screen_alert_BGN_TKIPorMIXED">TKIP or MIXED Encryption is not allowed with BGN Operating Mode.</string>
+	<string name="mms_screen_alert_TKIPorMIXED">TKIP or MIXED Encryption is not allowed with N or BGN Operating Mode.</string>
 	<string name="common_append_alert_wep">Change either Security Mode or Operating Mode.</string>
 	<string name="common_append_alert_wpa">Change either Encryption Algorithm or Operating Mode.</string>
 

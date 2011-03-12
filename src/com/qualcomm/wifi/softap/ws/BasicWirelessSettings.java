@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials provided
@@ -423,7 +423,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 						bNModeVerifyCheck=true;
 						verifyNModeAlgorithm(sNwModeWarning, lstPref, sLstEntry);					
 					} else{
-						sNwModeWarning = getString(R.string.bws_screen_alert_N_TKIP) +" "+
+						sNwModeWarning = getString(R.string.bws_screen_alert_N_TKIPorMIXED) +" "+
 						getString(R.string.common_append_alert_wpa);
 						bNModeVerifyCheck=false;
 						verifyNModeAlgorithm(sNwModeWarning, lstPref, sLstEntry);
@@ -435,7 +435,7 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 						bNModeVerifyCheck=true;
 						verifyNModeAlgorithm(sNwModeWarning, lstPref, sLstEntry);
 					} else {						
-						sNwModeWarning = getString(R.string.bws_screen_alert_BGN_TKIP) +" "+
+						sNwModeWarning = getString(R.string.bws_screen_alert_BGN_TKIPorMIXED) +" "+
 						getString(R.string.common_append_alert_wpa);
 						bNModeVerifyCheck=false;
 						verifyNModeAlgorithm(sNwModeWarning, lstPref, sLstEntry);
@@ -550,10 +550,10 @@ public class BasicWirelessSettings extends PreferenceActivity implements OnPrefe
 			bPrefChStatus = false;
 		} 
 		else{		
-			if((sSM.equals(L10NConstants.VAL_TWO) && sWpa.equals(L10NConstants.WPA_ALG_TKIP)) 
-					|| (sSM.equals(L10NConstants.VAL_THREE) && sRsn.equals(L10NConstants.WPA_ALG_TKIP))
+			if((sSM.equals(L10NConstants.VAL_TWO) && (sWpa.equals(L10NConstants.WPA_ALG_TKIP)||sWpa.equals(L10NConstants.WPA_ALG_MIXED))) 
+					|| (sSM.equals(L10NConstants.VAL_THREE) && (sRsn.equals(L10NConstants.WPA_ALG_TKIP)||sRsn.equals(L10NConstants.WPA_ALG_MIXED)))
 					|| (sSM.equals(L10NConstants.VAL_FOUR) && 
-							(sRsn.equals(L10NConstants.WPA_ALG_TKIP) || sWpa.equals(L10NConstants.WPA_ALG_TKIP)))) {
+							(sRsn.equals(L10NConstants.WPA_ALG_TKIP) || sWpa.equals(L10NConstants.WPA_ALG_TKIP)||sRsn.equals(L10NConstants.WPA_ALG_MIXED) || sWpa.equals(L10NConstants.WPA_ALG_MIXED)))) {
 				showAlertDialog(sNwModeWarning);
 				bPrefChStatus = false;
 			}else

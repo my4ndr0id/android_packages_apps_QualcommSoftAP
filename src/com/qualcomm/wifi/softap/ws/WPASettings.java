@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
-
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
  *  * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials provided
@@ -13,7 +13,7 @@
  *  * Neither the name of Code Aurora Forum, Inc. nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
-
+ *
  * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -200,14 +200,14 @@ OnKeyListener, OnPreferenceClickListener{
 			String sNM = defSharPref.getString(L10NConstants.HW_MODE_KEY, "");			
 			String sAlgmEntry = (String) ((ListPreference) preference).getEntries()[index];
 
-			if(newValue.equals(L10NConstants.WPA_ALG_TKIP)){
+			if(newValue.equals(L10NConstants.WPA_ALG_TKIP) || newValue.equals(L10NConstants.WPA_ALG_MIXED)){
 				if(sNM.equals(L10NConstants.SM_N_ONLY)){
-					sWpaAlert = getString(R.string.wpa_screen_alert_N_TKIP) + " " +
+					sWpaAlert = getString(R.string.wpa_screen_alert_N_TKIPorMIXED) + " " +
 					getString(R.string.common_append_alert_wpa);
 					showAlertDialog();
 					return false;
 				}else if(sNM.equals(L10NConstants.SM_N)){
-					sWpaAlert = getString(R.string.wpa_screen_alert_BGN_TKIP) + " " +
+					sWpaAlert = getString(R.string.wpa_screen_alert_BGN_TKIPorMIXED) + " " +
 					getString(R.string.common_append_alert_wpa);
 					showAlertDialog();
 					return false;
